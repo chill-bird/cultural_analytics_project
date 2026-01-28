@@ -1,7 +1,12 @@
 beautifulsoup4
+faster-whisper
 matplotlib
 numpy
+openai-whisper
 opencv-python
 pandas
 playwright
+python-dotenv
 tqdm
+torch
+torchvision
