@@ -7,8 +7,10 @@ dat/**.wav
 dat/**.mp3
 doc/meeting_minutes
 literature_downloads/
+project.code-workspace
 src/crawler/
 src/transcribe/convert_mp4_to_mp3.sh
+
 
 
 **/best_model_mild.pt

@@ -16,7 +16,7 @@ from whisper.utils import get_writer
 load_dotenv(dotenv_path=".env")  # Relative to root directory
 
 AUDIO_SOURCE_DIR = Path(os.getenv("AUDIO_SOURCE_DIR")).resolve()
-TRANSCRIPTION_TARGET_DIR = Path(os.getenv("TRANSCRIPTION_TARGET_DIR")).resolve()
+TRANSCRIPTIONS_DIR = Path(os.getenv("TRANSCRIPTIONS_DIR")).resolve()
 assert AUDIO_SOURCE_DIR.is_dir(), "Could not find audio source directory."
 
 SLURM_TASK_ID = int(os.getenv("SLURM_ARRAY_TASK_ID", "0"))
@@ -60,4 +60,4 @@ def transcribe_all(source_dir: Path, target_dir: Path):
 
 
 if __name__ == "__main__":
-    transcribe_all(AUDIO_SOURCE_DIR, TRANSCRIPTION_TARGET_DIR)
+    transcribe_all(AUDIO_SOURCE_DIR, TRANSCRIPTIONS_DIR)
