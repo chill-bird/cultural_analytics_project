@@ -12,7 +12,7 @@
 
 ## Requirements
 
-- Python 13.13 or higher
+- Python 3.13 or higher
 
 ## Getting Started
 
@@ -29,6 +29,13 @@ Unzip raw files and split data into train, test, val set. Split files and classn
 
 ```sh
 python -m src.transcribe.transcribe
+```
+
+### Detect blackout frames in video data
+Detects contiguous segments of dark (blackout) frames in video files and exports one CSV per video. CSV files are saved to `BLACKOUTS_DIR`.
+
+```sh
+python -m src.split.find_blackout_segments
 ```
 
 ## Acknowledgements
