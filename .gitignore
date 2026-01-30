@@ -7,10 +7,11 @@ dat/**.wav
 dat/**.mp3
 doc/meeting_minutes
 literature_downloads/
-project.code-workspace
 src/crawler/
 src/transcribe/convert_mp4_to_mp3.sh
-
+.env.cluster
+notes_cluster.md
+project.code-workspace
 
 **/best_model_mild.pt
 **/best_model_advanced.pt
@@ -222,4 +223,4 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
-notes_cluster.md
+

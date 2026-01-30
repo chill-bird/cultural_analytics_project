@@ -7,7 +7,7 @@
 ├── dat/  # Datasets directory
 │   ├── chapters/  # Chapters from Bundesarchiv
 │   ├── transcriptions/  # Audio transcriptions
-│   └── video_data.tsv  # Data set description
+│   └── video_data.tsv  # Data set description (tab-separated)
 ├── doc/  # Documentation files
 └── src/  # Source code
     └── analysis/
