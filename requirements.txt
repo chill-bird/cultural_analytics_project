@@ -1,3 +1,4 @@
+accelerate
 beautifulsoup4
 faster-whisper
 imageio
@@ -11,4 +12,6 @@ playwright
 python-dotenv
 tqdm
 torch
+transformers
 torchvision
+# vllm
