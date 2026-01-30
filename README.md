@@ -5,6 +5,9 @@
 ```sh
 .
 ├── dat/  # Datasets directory
+│   ├── chapters/  # Chapters from Bundesarchiv
+│   ├── transcriptions/  # Audio transcriptions
+│   └── video_data.tsv  # Data set description
 ├── doc/  # Documentation files
 └── src/  # Source code
     └── analysis/
@@ -25,13 +28,14 @@
 
 ### Transcribe audio data via whisper
 
-Unzip raw files and split data into train, test, val set. Split files and classname-index associations are saved to `DAT_DIR`.
+Transcribes .wav audio files in cluster job
 
 ```sh
 python -m src.transcribe.transcribe
 ```
 
 ### Detect blackout frames in video data
+
 Detects contiguous segments of dark (blackout) frames in video files and exports one CSV per video. CSV files are saved to `BLACKOUTS_DIR`.
 
 ```sh
