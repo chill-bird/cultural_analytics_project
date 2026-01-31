@@ -16,6 +16,7 @@
 ## Requirements
 
 - Python 3.13 or higher
+- For module `chaper_matchin`, a key at OpenAI is required: <https://platform.openai.com/api-keys> and to be placed inside `.env` file.
 
 ## Getting Started
 

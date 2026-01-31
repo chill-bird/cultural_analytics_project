@@ -35,6 +35,8 @@ with open(PROMPT_FILE, "r") as f:
 # LLM
 MODEL_ID = "/work/ow52opul-wochenschau_analysis/models/qwen-3-14b"
 
+print(f"Loading {MODEL_ID}")
+
 tokenizer = AutoTokenizer.from_pretrained(
     MODEL_ID,
     local_files_only=True,
@@ -47,7 +49,7 @@ model = AutoModelForCausalLM.from_pretrained(
     device_map="auto",
     local_files_only=True,
     torch_dtype="auto",
-    offload_folder=os.environ["MODEL_OFFLOAD_DIR"],  # Local folder
+    # offload_folder=os.environ["MODEL_OFFLOAD_DIR"],  # Local folder
 )
 
 model.eval()
@@ -104,6 +106,10 @@ def create_prompt(row: pd.Series) -> str:
     prompt = PROMPT_TEMPLATE
     prompt = prompt.replace(chapters_placeholder, chapters_str)
     prompt = prompt.replace(audio_transcription_placeholder, audio_transcription_str)
+
+    print("### PROMPT ###")
+    print(prompt)
+    print("### PROMPT END ###")
 
     return prompt
 
