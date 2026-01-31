@@ -6,7 +6,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64GB
-#SBATCH --time=1:00:00
+#SBATCH --time=2:00:00
 #SBATCH --signal=B:SIGTERM@60
 #SBATCH --output=logs/match_chapters/%x_%A_%a.out
 #SBATCH --error=logs/match_chapters/%x_%A_%a.err

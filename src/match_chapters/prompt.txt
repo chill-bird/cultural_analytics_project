@@ -23,7 +23,7 @@ $audio_transcription$
 ### Result format ###
 
 The result must be a comma-separated CSV with the following columns
-chapter_name,start_mm:ss,end_mm:ss
+chapter,start_mm:ss,end_mm:ss
 
-The chapter_name must match the chapter descriptions exactly.
+The chapter must match the column from Chapters exactly, e.g. Vorfilm or 1 or 2 etc.
 The start and end timestamps must be in notation mm:ss, e.g. 00:17
