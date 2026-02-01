@@ -15,8 +15,7 @@
 
 ## Requirements
 
-- Python 3.13 or higher
-- For module `chaper_matchin`, a key at OpenAI is required: <https://platform.openai.com/api-keys> and to be placed inside `.env` file.
+- Python 3.12 or higher
 
 ## Getting Started
 
@@ -25,7 +24,7 @@
 - Install requirements `pip install -r requirements.txt`
 - Copy `.env.example` and save as `.env`. Add environment values to environment variables.
 
-## Run tasks
+## Data preprocessing
 
 ### Transcribe audio data via whisper
 
@@ -41,6 +40,22 @@ Detects contiguous segments of dark (blackout) frames in video files and exports
 
 ```sh
 python -m src.split.find_blackout_segments
+```
+
+### Get timestamps for chapters with OpenAI
+
+Prompts GPT to align chapters with audio transcription elements. Before starting script, an API key at OpenAI is required: <https://platform.openai.com/api-keys> and to be placed inside `.env` file.
+
+```sh
+python -m src.match_chapters.match_chapters_gpt
+```
+
+### Merge chapter info
+
+Merges information from timestamps and chapter descriptions to one TSV file `CHAPTERS_DATA_TSV`.
+
+```sh
+python -m src.match_chapters.merge_chapter_info
 ```
 
 ## Acknowledgements
