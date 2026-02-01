@@ -9,7 +9,13 @@ import pandas as pd
 from pathlib import Path
 from dotenv import load_dotenv
 import os
-from src.util import mmss_to_ms, get_chapter_mapping_df, get_chapters_df, get_transcription_df
+from src.util import (
+    mmss_to_ms,
+    get_chapter_mapping_df,
+    get_chapters_df,
+    get_transcription_df,
+    get_content_flags_df,
+)
 
 # Paths
 load_dotenv()
@@ -18,11 +24,13 @@ TSV = Path(os.getenv("VIDEO_DATA_TSV")).resolve()
 CHAPTERS_DIR = Path(os.getenv("CHAPTERS_DIR")).resolve()
 TRANSCRIPTIONS_DIR = Path(os.getenv("TRANSCRIPTIONS_DIR")).resolve()
 CHAPTERS_TIMESTAMPED_DIR = Path(os.getenv("CHAPTERS_TIMESTAMPED_DIR")).resolve()
+CHAPTERS_FLAGGED_DIR = Path(os.getenv("CHAPTERS_FLAGGED_DIR")).resolve()
+
 assert TSV.is_file(), "Could not find TSV."
 assert CHAPTERS_DIR.is_dir(), "Could not find chapters directory."
 assert TRANSCRIPTIONS_DIR.is_dir(), "Could not find transcriptions directory."
-CHAPTERS_TIMESTAMPED_DIR.mkdir(parents=False, exist_ok=True)
 assert CHAPTERS_TIMESTAMPED_DIR.is_dir(), "Could not find directory for timestamped chapters."
+assert CHAPTERS_FLAGGED_DIR.is_dir(), "Could not find directory for flagged content chapters."
 
 TARGET_FILE = Path(os.getenv("CHAPTERS_DATA_TSV")).resolve()
 
@@ -31,13 +39,16 @@ COLUMNS_TO_KEEP = [
     "chapter",
     "start_mm:ss",
     "end_mm:ss",
+    "is_war_report",
+    "is_combat_scene",
+    "german_soldiers_depicted",
     "content",
     "audio_transcription",
     "filestem",
     "episode",
     "year",
-    "end",
     "start",
+    "end",
 ]
 
 
@@ -63,7 +74,7 @@ def main() -> None:
     movies_df = pd.read_csv(TSV, sep="\t")
     # Only use data where transcription and chapters exist
     movies_df = movies_df[(movies_df["has_transcription"]) & (movies_df["has_chapters"])]
-    
+
     n = len(movies_df)
     chapters_dfs = []
     for i, row in movies_df.iterrows():
@@ -86,13 +97,30 @@ def main() -> None:
             chapters_df = chapters_df.merge(timestamp_mapping_df, on="chapter", how="left")
             chapters_df["start"] = chapters_df["start_mm:ss"].fillna("").apply(mmss_to_ms)
             chapters_df["end"] = chapters_df["end_mm:ss"].fillna("").apply(mmss_to_ms)
-
         else:
             print("No timestamp mapping found.")
 
         # Append transcriptions
         transcriptions_df = get_transcription_df(row["filestem"])
-        chapters_df["audio_transcription"] = chapters_df.apply(lambda row: get_transcription_for_chapter(transcriptions_df, row["start"], row["end"]), axis=1)
+        chapters_df["audio_transcription"] = chapters_df.apply(
+            lambda row: get_transcription_for_chapter(transcriptions_df, row["start"], row["end"]),
+            axis=1,
+        )
+
+        content_flags_dfs = [
+            pd.DataFrame(get_content_flags_df(row["filestem"], c)) for c in chapters_df["chapter"].to_list()
+        ]
+        content_flags_df = pd.concat(content_flags_dfs, ignore_index=True)
+        if not content_flags_df.empty:
+            content_flags_df["chapter"] = content_flags_df["chapter"].astype(str)
+            content_flags_df = content_flags_df[
+                ["chapter", "is_war_report", "is_combat_scene", "german_soldiers_depicted"]
+            ]
+            chapters_df = chapters_df.merge(content_flags_df, on="chapter", how="left")
+        else:
+            chapters_df["is_war_report"] = None
+            chapters_df["is_combat_scene"] = None
+            chapters_df["german_soldiers_depicted"] = None
 
         chapters_dfs.append(chapters_df)
 
