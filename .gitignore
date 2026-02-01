@@ -6,7 +6,9 @@
 dat/**.wav
 dat/**.mp3
 dat/tmp
+dat/chapters_flagged
 doc/meeting_minutes
+slurm_scripts/logs
 literature_downloads/
 src/crawler/
 src/transcribe/convert_mp4_to_mp3.sh
@@ -224,4 +226,5 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
 

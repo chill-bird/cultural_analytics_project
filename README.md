@@ -47,7 +47,7 @@ python -m src.split.find_blackout_segments
 Prompts GPT to align chapters with audio transcription elements. Before starting script, an API key at OpenAI is required: <https://platform.openai.com/api-keys> and to be placed inside `.env` file.
 
 ```sh
-python -m src.match_chapters.match_chapters_gpt
+python -m src.chapters.match_chapters_gpt
 ```
 
 ### Merge chapter info
@@ -55,7 +55,7 @@ python -m src.match_chapters.match_chapters_gpt
 Merges information from timestamps and chapter descriptions to one TSV file `CHAPTERS_DATA_TSV`.
 
 ```sh
-python -m src.match_chapters.merge_chapter_info
+python -m src.chapters.merge_chapter_info
 ```
 
 ## Acknowledgements
