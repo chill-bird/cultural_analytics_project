@@ -58,6 +58,21 @@ Merges information from timestamps and chapter descriptions to one TSV file `CHA
 python -m src.match_chapters.merge_chapter_info
 ```
 
+### Select kayframes with LMSKE
+https://github.com/ttharden/Keyframe-Extraction-for-video-summarization
+
+1. Run TransNetV2 https://github.com/soCzech/TransNetV2
+- Create a virtual environment `python -m venv .venv`
+- Activate virtual environment `source .venv/bin/activate`
+```sh
+pip install tensorflow==2.5.0
+pip install ffmpeg-python pillow
+pip install torch torchvision torchaudio
+
+module load FFmpeg
+git clone https://github.com/soCzech/TransNetV2.git
+```
+
 ## Acknowledgements
 
 Computations for this work were done (in part) using resources of the Leipzig University Computing Center.
