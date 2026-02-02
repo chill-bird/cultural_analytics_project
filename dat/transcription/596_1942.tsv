@@ -49,8 +49,7 @@ start	end	text	start_mm:ss	end_mm:ss
 322900	328080	Beim Anheizen und Nachlegen braucht der Ofen viel Luft damit das Feuer kräftig aufflammt und nicht schwelt.	05:22	05:28
 342490	344490	Der Rost muss gleichmäßig bedeckt werden.	05:42	05:44
 344610	346210	Freie Stellen verschlechtern die Verbrennung.	05:44	05:46
-346770	350870	Wenn der Brennstoff durchgeglüht ist muss die Luftzufuhr so sparsam wie möglich eingestellt werden,	05:46	05:50
-351270	352990	damit nicht unnötig Kohle verbraucht wird.	05:51	05:52
+346770	352990	Wenn der Brennstoff durchgeglüht ist muss die Luftzufuhr so sparsam wie möglich eingestellt werden damit nicht unnötig Kohle verbraucht wird.	05:46	05:52
 353650	355830	Auch mit dem Nachlegen soll man rechtzeitig aufhören.	05:53	05:55
 356290	360110	Nur so lange Glut im Ofen halten wie Feuer zum Kochen oder zum Wärmen gebraucht wird.	05:56	06:00
 360110	362770	Vor allem aber haltet die Wärme im Haus.	06:00	06:02
@@ -85,8 +84,7 @@ start	end	text	start_mm:ss	end_mm:ss
 585050	587230	Seine Maschine wackelt zum Zeichen des Sieges.	09:45	09:47
 613680	614980	Sein erster Kampfbericht.	10:13	10:14
 616180	620620	Oberst Galland hat in unermüdlichem, heldenhaften Einsatz 94 Gegner abgeschossen.	10:16	10:20
-620620	628380	Der Führer verlieh Oberst Galland, der nach dem Tode von Oberst Mölders als dessen Nachfolger zum Inspekteur der Jagdflieger ernannt wurde,	10:20	10:28
-628940	632860	das Eichenlaub mit Schwertern und Brillanten zum Ritterkreuz des Eisernen Kreuzes.	10:28	10:32
+620620	632860	Der Führer verlieh Oberst Galland, der nach dem Tode von Oberst Mölders als dessen Nachfolger zum Inspekteur der Jagdflieger ernannt wurde das Eichenlaub mit Schwertern und Brillanten zum Ritterkreuz des Eisernen Kreuzes.	10:20	10:32
 633360	638200	Er ist der zweite deutsche Offizier, der diese höchste Tappbarkeitsauszeichnung erhalten hat.	10:33	10:38
 653050	654430	Am Nordabschnitt der Front.	10:53	10:54
 656400	658760	Das Hauptquartier der spanischen Blauen Division.	10:56	10:58

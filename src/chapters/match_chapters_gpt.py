@@ -40,7 +40,6 @@ client = OpenAI()
 
 def get_chapters_str(row: pd.Series) -> str:
     chapters_tsv = Path(CHAPTERS_DIR / (row["filestem"] + "_chapters.tsv")).resolve()
-    assert chapters_tsv.is_file()
     with open(chapters_tsv, "r") as f:
         chapters_str = f.read()
     return chapters_str
@@ -75,8 +74,6 @@ def main() -> None:
     df = pd.read_csv(TSV, sep="\t")
     # Only use data where transcription and chapters exist
     df = df[(df["has_transcription"]) & (df["has_chapters"])]
-    # TODO remove temporary fix afterwars
-    df = df[df["episode"] > 748]
 
     for i, row in df.iterrows():
         print(f"[{i+1}/{len(df)}] Processing {row['title']} ...")

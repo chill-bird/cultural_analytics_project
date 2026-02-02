@@ -54,8 +54,7 @@ start	end	text	start_mm:ss	end_mm:ss
 201430	204350	Ja, kann denn solch eine Bombe nicht auch in die Wohnung einschlagen?	03:21	03:24
 204650	205770	Das kann auch vorkommen.	03:24	03:25
 206450	208970	Die Bekämpfung bleibt natürlich die gleiche.	03:26	03:28
-216940	221000	Wenn ich recht verstanden habe besteht doch absolut die Möglichkeit,	03:36	03:41
-221720	226320	dass dieses Löschen auch während eines Fliegerangriffs stattfindet.	03:41	03:46
+216940	226320	Wenn ich recht verstanden habe besteht doch absolut die Möglichkeit dass dieses Löschen auch während eines Fliegerangriffs stattfindet.	03:36	03:46
 226320	226940	Ganz richtig.	03:46	03:46
 227620	229800	Unter Umständen dauert der Luftangriff stundenlang.	03:47	03:49
 230340	232240	So lange kann mit dem Löschen nicht gewartet werden.	03:50	03:52
@@ -68,10 +67,8 @@ start	end	text	start_mm:ss	end_mm:ss
 245240	250420	Dazu gehört auch dass jedes einzelne Gerät an Ort und Stelle steht.	04:05	04:10
 251200	253560	Nämlich die Luftschutzhandspritze	04:11	04:13
 253560	257100	und die Luftschutzhausapotheke im Luftschutzraum.	04:13	04:17
-258480	261860	Dagegen Leine Feuerpatschen,	04:18	04:21
-262940	265700	Einreishaken Spaten,	04:22	04:25
-266700	269220	Beil Sandkiste,	04:26	04:29
-270100	270760	Wassereimer	04:30	04:30
+258480	265700	Dagegen Leine Feuerpatschen Einreishaken Spaten,	04:18	04:25
+266700	270760	Beil Sandkiste Wassereimer	04:26	04:30
 270760	272540	und Leiter	04:30	04:32
 272540	275380	im Treppenhaus verteilt.	04:32	04:35
 276320	277360	In erster Linie jedoch	04:36	04:37
@@ -337,8 +334,7 @@ start	end	text	start_mm:ss	end_mm:ss
 1716460	1717140	gegen England.	28:36	28:37
 1727240	1727940	In massiertem	28:47	28:47
 1727940	1728400	Angriff	28:47	28:48
-1728400	1730480	werden Häfen Befestigungen,	28:48	28:50
-1730980	1731800	Industriewerke	28:50	28:51
+1728400	1731800	werden Häfen Befestigungen Industriewerke	28:48	28:51
 1731800	1732700	und Flugplätze	28:51	28:52
 1732700	1733220	mit einem	28:52	28:53
 1733220	1733560	wahren	28:53	28:53
