@@ -19,7 +19,7 @@ load_dotenv()
 TSV = Path(os.getenv("VIDEO_DATA_TSV")).resolve()
 CHAPTERS_DIR = Path(os.getenv("CHAPTERS_DIR")).resolve()
 TRANSCRIPTIONS_DIR = Path(os.getenv("TRANSCRIPTIONS_DIR")).resolve()
-PROMPT_FILE = Path(Path(__file__).parent.resolve() / "prompt.txt").resolve()
+PROMPT_FILE = Path(Path(__file__).parent.resolve() / "prompt_match_chapters.txt").resolve()
 CHAPTERS_TIMESTAMPED_DIR = Path(os.getenv("CHAPTERS_TIMESTAMPED_DIR")).resolve()
 assert TSV.is_file(), "Could not find TSV."
 assert PROMPT_FILE.is_file(), "Could not find prompt file."

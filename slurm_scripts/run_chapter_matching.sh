@@ -58,7 +58,7 @@ EOF
 # -------------------------
 START=$(date +%s)
 
-python -m src.match_chapters.match_chapters
+python -m src.chapters.match_chapters
 
 # -------------------------
 # Remove offload directory

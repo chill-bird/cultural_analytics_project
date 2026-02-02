@@ -13,15 +13,19 @@ import os
 # Paths
 load_dotenv()
 
-TSV = Path(os.getenv("VIDEO_DATA_TSV")).resolve()
+VIDEO_DATA_TSV = Path(os.getenv("VIDEO_DATA_TSV")).resolve()
+CHAPTERS_DATA_TSV = Path(os.getenv("CHAPTERS_DATA_TSV")).resolve()
 CHAPTERS_DIR = Path(os.getenv("CHAPTERS_DIR")).resolve()
 TRANSCRIPTIONS_DIR = Path(os.getenv("TRANSCRIPTIONS_DIR")).resolve()
 CHAPTERS_TIMESTAMPED_DIR = Path(os.getenv("CHAPTERS_TIMESTAMPED_DIR")).resolve()
-assert TSV.is_file(), "Could not find TSV."
+CHAPTERS_FLAGGED_DIR = Path(os.getenv("CHAPTERS_FLAGGED_DIR")).resolve()
+
+assert VIDEO_DATA_TSV.is_file(), "Could not find TSV."
+assert CHAPTERS_DATA_TSV.is_file(), "Could not find TSV."
 assert CHAPTERS_DIR.is_dir(), "Could not find chapters directory."
 assert TRANSCRIPTIONS_DIR.is_dir(), "Could not find transcriptions directory."
-CHAPTERS_TIMESTAMPED_DIR.mkdir(parents=False, exist_ok=True)
 assert CHAPTERS_TIMESTAMPED_DIR.is_dir(), "Could not find directory for timestamped chapters."
+assert CHAPTERS_FLAGGED_DIR.is_dir(), "Could not find directory for flagged content chapters."
 
 
 def mmss_to_ms(mmss: str | None) -> int | None:
@@ -56,7 +60,7 @@ def seconds_to_mmss(mmss: int | float | None) -> str:
         raise ValueError(f"Invalid time format: {mmss!r}. Expected 'mm:ss'.")
 
 
-def get_chapter_mapping_df(filestem: str | None) -> str | None:
+def get_chapter_mapping_df(filestem: str | None) -> pd.DataFrame | None:
 
     if not filestem:
         return None
@@ -67,7 +71,7 @@ def get_chapter_mapping_df(filestem: str | None) -> str | None:
     return df_chapters
 
 
-def get_chapters_df(filestem: str | None) -> str | None:
+def get_chapters_df(filestem: str | None) -> pd.DataFrame | None:
 
     if not filestem:
         return None
@@ -78,7 +82,7 @@ def get_chapters_df(filestem: str | None) -> str | None:
     return df_chapters
 
 
-def get_transcription_df(filestem: str | None) -> str | None:
+def get_transcription_df(filestem: str | None) -> pd.DataFrame | None:
 
     if not filestem:
         return None
@@ -87,3 +91,15 @@ def get_transcription_df(filestem: str | None) -> str | None:
         return None
     df_transcriptions = pd.read_csv(transcription_tsv, sep="\t")
     return df_transcriptions
+
+
+def get_content_flags_df(filestem: str | None, chapter_name: str) -> pd.DataFrame | None:
+
+    if not filestem or not chapter_name:
+        return None
+    chapter_name = str(chapter_name)
+    flags_csv = Path(CHAPTERS_FLAGGED_DIR / (filestem + "_" + chapter_name + ".csv")).resolve()
+    if not flags_csv.is_file():
+        return None
+    df_flags = pd.read_csv(flags_csv, sep=",")
+    return df_flags

@@ -19,7 +19,7 @@ load_dotenv()
 TSV = Path(os.getenv("VIDEO_DATA_TSV")).resolve()
 CHAPTERS_DIR = Path(os.getenv("CHAPTERS_DIR")).resolve()
 TRANSCRIPTIONS_DIR = Path(os.getenv("TRANSCRIPTIONS_DIR")).resolve()
-PROMPT_FILE = Path(Path(__file__).parent.resolve() / "prompt.txt").resolve()
+PROMPT_FILE = Path(Path(__file__).parent.resolve() / "prompt_match_chapters.txt").resolve()
 CHAPTERS_TIMESTAMPED_DIR = Path(os.getenv("CHAPTERS_TIMESTAMPED_DIR")).resolve()
 assert TSV.is_file(), "Could not find TSV."
 assert PROMPT_FILE.is_file(), "Could not find prompt file."
@@ -40,7 +40,6 @@ client = OpenAI()
 
 def get_chapters_str(row: pd.Series) -> str:
     chapters_tsv = Path(CHAPTERS_DIR / (row["filestem"] + "_chapters.tsv")).resolve()
-    assert chapters_tsv.is_file()
     with open(chapters_tsv, "r") as f:
         chapters_str = f.read()
     return chapters_str
