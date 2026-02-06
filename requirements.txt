@@ -5,6 +5,7 @@ imageio
 imageio-ffmpeg
 matplotlib
 numpy
+openai
 openai-whisper
 opencv-python
 pandas
@@ -16,4 +17,3 @@ tqdm
 torch
 transformers
 torchvision
-# vllm

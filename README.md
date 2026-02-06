@@ -7,15 +7,57 @@
 ├── dat/  # Datasets directory
 │   ├── chapters/  # Chapters from Bundesarchiv
 │   ├── transcriptions/  # Audio transcriptions
-│   └── video_data.tsv  # Data set description (tab-separated)
+│   ├── chapter_data.tsv  # Chapter data
+│   └── video_data.tsv  # Video data
 ├── doc/  # Documentation files
 └── src/  # Source code
-    └── analysis/
+    ├── analysis/
+    └── chapters/  # Timestamp and classify chapters
 ```
+
+## Data
+
+Due to repository size limits, raw data were deleted from repository and, instead, aggregated in the two following `tsv` files.
+
+1. `video_data.tsv`
+
+    - **episode**: Episode number
+    - **year**: Year
+    - **filestem**: Filestem as ID
+    - **length**: Length in seconds
+    - **fps**: Frames per Second
+    - **frames**: Number of frames
+    - **titel**: Title of the episode
+    - **url_bundesarchiv**: URL to movie source
+    - **keywords**: Content keywords from movie source
+    - **has_transcription**: Has an audio transcription file
+    - **has_chapters**: Has a chapters file
+
+2. `chapter_data.tsv`
+    - **titel**: Title of the episode
+    - **chapter**: Chapter title
+    - **start_mm:ss**: Start timestamp in mm:ss format
+    - **end_mm:ss**: End timestamp in mm:ss format
+    - **is_war_report**: Chapter is flagged as war report
+    - **is_combat_scene**: Chapter is flagged as combat scene
+    - **german_soldiers_depicted**: Chapter is flagged as depicting German Soldiers
+    - **content**: Chapter content description
+    - **audio_transcription**: Audio transcription
+    - **filestem**: Filestem from Video ID
+    - **episode**: Episode number
+    - **year**: Year
+    - **start**: Start timestamp in milliseconds
+    - **end**: End timestamp in milliseconds
+
+### Chapter flags
+
+`is_war_report`: The scene primarily focuses on reporting on the ongoing war and German troops are involved.
+`is_combat_scene`: The scene shows actual combat with German participation (staged or re-inacted does count into it). Scenes like this depict German weapons and/or German soldiers in action. Combat scenes without German involvement do NOT count.
+`german_soldiers_depicted`: The scene shows German soldiers. This can be combat or interaction with civilians or marches or anything more.
 
 ## Requirements
 
-- Python 3.12 or higher
+- Python 3.11 to 3.13
 
 ## Getting Started
 
@@ -48,6 +90,14 @@ Prompts GPT to align chapters with audio transcription elements. Before starting
 
 ```sh
 python -m src.chapters.match_chapters_gpt
+```
+
+### Classify chapters with OpenAI
+
+Prompts GPT to align chapters with audio transcription elements. Before starting script, an API key at OpenAI is required: <https://platform.openai.com/api-keys> and to be placed inside `.env` file.
+
+```sh
+python -m src.chapters.flag_chapters
 ```
 
 ### Merge chapter info

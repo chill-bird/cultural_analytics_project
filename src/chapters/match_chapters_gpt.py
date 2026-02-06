@@ -74,12 +74,17 @@ def main() -> None:
     df = pd.read_csv(TSV, sep="\t")
     # Only use data where transcription and chapters exist
     df = df[(df["has_transcription"]) & (df["has_chapters"])]
+    # Existing chapter mappings
+
 
     for i, row in df.iterrows():
         print(f"[{i+1}/{len(df)}] Processing {row['title']} ...")
 
         result_filename = row["filestem"] + ".csv"
         result_filepath = Path(CHAPTERS_TIMESTAMPED_DIR / result_filename).resolve()
+        if result_filepath.is_file():
+            print("Skipping because file already exists.")
+            continue
 
         prompt = create_prompt(row)
         try:

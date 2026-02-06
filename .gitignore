@@ -7,6 +7,7 @@ dat/**.wav
 dat/**.mp3
 dat/tmp
 dat/chapters_flagged
+dat/clean_video_data.ipynb
 doc/meeting_minutes
 slurm_scripts/logs
 literature_downloads/
