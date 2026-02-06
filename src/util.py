@@ -15,17 +15,9 @@ load_dotenv()
 
 VIDEO_DATA_TSV = Path(os.getenv("VIDEO_DATA_TSV")).resolve()
 CHAPTERS_DATA_TSV = Path(os.getenv("CHAPTERS_DATA_TSV")).resolve()
-CHAPTERS_DIR = Path(os.getenv("CHAPTERS_DIR")).resolve()
-TRANSCRIPTIONS_DIR = Path(os.getenv("TRANSCRIPTIONS_DIR")).resolve()
-CHAPTERS_TIMESTAMPED_DIR = Path(os.getenv("CHAPTERS_TIMESTAMPED_DIR")).resolve()
-CHAPTERS_FLAGGED_DIR = Path(os.getenv("CHAPTERS_FLAGGED_DIR")).resolve()
 
 assert VIDEO_DATA_TSV.is_file(), "Could not find TSV."
 assert CHAPTERS_DATA_TSV.is_file(), "Could not find TSV."
-assert CHAPTERS_DIR.is_dir(), "Could not find chapters directory."
-assert TRANSCRIPTIONS_DIR.is_dir(), "Could not find transcriptions directory."
-assert CHAPTERS_TIMESTAMPED_DIR.is_dir(), "Could not find directory for timestamped chapters."
-assert CHAPTERS_FLAGGED_DIR.is_dir(), "Could not find directory for flagged content chapters."
 
 
 def mmss_to_ms(mmss: str | None) -> int | None:
@@ -64,6 +56,9 @@ def get_chapter_mapping_df(filestem: str | None) -> pd.DataFrame | None:
 
     if not filestem:
         return None
+    CHAPTERS_TIMESTAMPED_DIR = Path(os.getenv("CHAPTERS_TIMESTAMPED_DIR")).resolve()
+    assert CHAPTERS_TIMESTAMPED_DIR.is_dir(), "Could not find directory for timestamped chapters."
+
     chapters_mapping_csv = Path(CHAPTERS_TIMESTAMPED_DIR / (filestem + ".csv")).resolve()
     if not chapters_mapping_csv.is_file():
         return None
@@ -75,6 +70,9 @@ def get_chapters_df(filestem: str | None) -> pd.DataFrame | None:
 
     if not filestem:
         return None
+    CHAPTERS_DIR = Path(os.getenv("CHAPTERS_DIR")).resolve()
+    assert CHAPTERS_DIR.is_dir(), "Could not find chapters directory."
+
     chapters_tsv = Path(CHAPTERS_DIR / (filestem + "_chapters.tsv")).resolve()
     if not chapters_tsv.is_file():
         return None
@@ -86,6 +84,9 @@ def get_transcription_df(filestem: str | None) -> pd.DataFrame | None:
 
     if not filestem:
         return None
+    TRANSCRIPTIONS_DIR = Path(os.getenv("TRANSCRIPTIONS_DIR")).resolve()
+    assert TRANSCRIPTIONS_DIR.is_dir(), "Could not find transcriptions directory."
+
     transcription_tsv = Path(TRANSCRIPTIONS_DIR / (filestem + ".tsv")).resolve()
     if not transcription_tsv.is_file():
         return None
@@ -97,6 +98,9 @@ def get_content_flags_df(filestem: str | None, chapter_name: str) -> pd.DataFram
 
     if not filestem or not chapter_name:
         return None
+    CHAPTERS_FLAGGED_DIR = Path(os.getenv("CHAPTERS_FLAGGED_DIR")).resolve()
+    assert CHAPTERS_FLAGGED_DIR.is_dir(), "Could not find directory for flagged content chapters."
+
     chapter_name = str(chapter_name)
     flags_csv = Path(CHAPTERS_FLAGGED_DIR / (filestem + "_" + chapter_name + ".csv")).resolve()
     if not flags_csv.is_file():
