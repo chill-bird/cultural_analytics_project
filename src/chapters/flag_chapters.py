@@ -9,16 +9,15 @@ import pandas as pd
 from pathlib import Path
 from dotenv import load_dotenv
 import os
-from io import StringIO
 from openai import OpenAI
 
 # Paths
 load_dotenv()
 
-TSV = Path(os.getenv("CHAPTERS_DATA_TSV")).resolve()
+CHAPTERS_DATA_TSV = Path(os.getenv("CHAPTERS_DATA_TSV")).resolve()
 CHAPTERS_DIR = Path(os.getenv("CHAPTERS_DIR")).resolve()
 PROMPT_FILE = Path(Path(__file__).parent.resolve() / "prompt_flag_chapters.txt").resolve()
-assert TSV.is_file(), "Could not find TSV."
+assert CHAPTERS_DATA_TSV.is_file(), "Could not find TSV."
 assert PROMPT_FILE.is_file(), "Could not find prompt file."
 assert CHAPTERS_DIR.is_dir(), "Could not find CHAPTERS_DIR directory."
 
@@ -59,16 +58,24 @@ def create_prompt(row: pd.Series) -> str:
 
 def main() -> None:
 
-    df = pd.read_csv(TSV, sep="\t")
+    df = pd.read_csv(CHAPTERS_DATA_TSV, sep="\t")
 
     # Only use data where transcription timestamps exist
-    df = df[(df["start"].notna()) & (df["end"].notna())]
+    df = df[
+        (df["start"].notna())
+        & (df["end"].notna())
+        & (df["audio_transcription"].notna())
+        & (df["content"].notna())
+    ]
 
     for i, row in df.iterrows():
         print(f"[{i+1}/{len(df)}] Processing Chapter {row['chapter']} of {row['title']} ...")
 
         result_filename = row["filestem"] + "_" + str(row["chapter"]) + ".csv"
         result_filepath = Path(RESULT_DIR / result_filename).resolve()
+        if result_filepath.is_file():
+            print("Skipping because file already exists.")
+            continue
 
         prompt = create_prompt(row)
         try:

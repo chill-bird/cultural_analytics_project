@@ -92,13 +92,14 @@ def main() -> None:
 
         # Merge timestamp mapping to chapters
         timestamp_mapping_df = get_chapter_mapping_df(row["filestem"])
-        if not timestamp_mapping_df.empty:
+        if timestamp_mapping_df is not None and not timestamp_mapping_df.empty:
             timestamp_mapping_df["chapter"] = timestamp_mapping_df["chapter"].astype(str)
             chapters_df = chapters_df.merge(timestamp_mapping_df, on="chapter", how="left")
             chapters_df["start"] = chapters_df["start_mm:ss"].fillna("").apply(mmss_to_ms)
             chapters_df["end"] = chapters_df["end_mm:ss"].fillna("").apply(mmss_to_ms)
         else:
             print("No timestamp mapping found.")
+            continue
 
         # Append transcriptions
         transcriptions_df = get_transcription_df(row["filestem"])
@@ -108,10 +109,11 @@ def main() -> None:
         )
 
         content_flags_dfs = [
-            pd.DataFrame(get_content_flags_df(row["filestem"], c)) for c in chapters_df["chapter"].to_list()
+            pd.DataFrame(get_content_flags_df(row["filestem"], c))
+            for c in chapters_df["chapter"].to_list()
         ]
         content_flags_df = pd.concat(content_flags_dfs, ignore_index=True)
-        if not content_flags_df.empty:
+        if content_flags_df is not None and not content_flags_df.empty:
             content_flags_df["chapter"] = content_flags_df["chapter"].astype(str)
             content_flags_df = content_flags_df[
                 ["chapter", "is_war_report", "is_combat_scene", "german_soldiers_depicted"]

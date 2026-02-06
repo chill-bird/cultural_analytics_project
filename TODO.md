@@ -1,8 +1,12 @@
 # TODO
 
+## Chapters
+
+- [x] Add missing chapters
+
 ## Data filtering
 
-- [ ] Flag for
+- [x] Flag for
   - Military
   - Soldiers depicted
 
