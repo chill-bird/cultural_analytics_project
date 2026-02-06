@@ -11,6 +11,7 @@ dat/clean_video_data.ipynb
 dat/keyframes
 dat/scenes
 dat/clip_features
+dat/shot_detection
 doc/meeting_minutes
 slurm_scripts/logs
 literature_downloads/
