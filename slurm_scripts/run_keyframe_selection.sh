@@ -1,24 +1,21 @@
 #!/bin/bash
-#SBATCH --job-name=get_shot_boundaries_transnetv2   
+#SBATCH --job-name=lmske_keyframes
 #SBATCH --partition=paula    
 #SBATCH --array=0-237%16         
 #SBATCH --gres=gpu:1      
 #SBATCH --gpu-bind=single:1               
 #SBATCH --cpus-per-task=8                
 #SBATCH --mem=32G                        
-#SBATCH --time=00:10:00   
+#SBATCH --time=05:00:00   
 #SBATCH --signal=B:SIGTERM@60 
-#SBATCH --output=logs/transnetv2_%j.out           
-#SBATCH --error=logs/transnetv2_%j.err 
+#SBATCH --output=logs/keyframes_%A_%a.out
+#SBATCH --error=logs/keyframes_%A_%a.err
 
 # ----------------------------
 # Load modules
 # ----------------------------
-
-module purge
-module load FFmpeg
+module load Python/3.10
 module load CUDA/11.8.0
-module load cuDNN/8.6.0.163
 
 # Activate Python environment
 source "$PWD/.venv/bin/activate"
@@ -36,25 +33,33 @@ echo "Node:         $(hostname)"
 echo "GPUs visible:"
 nvidia-smi
 
-python - <<'EOF'
-import torch
-import tensorflow as tf
-print("Torch device:", "cuda" if torch.cuda.is_available() else "cpu")
-print("TF devices:", tf.config.list_physical_devices())
-EOF
+VIDEO_DIR=/work/ow52opul-wochenschau_analysis/dat/video_data
+FEATURE_DIR="$PWD/clip_features"
+SCENE_DIR=/work/ow52opul-wochenschau_analysis/dat/scenes
+OUT_DIR="$PWD/keyframes"
 
-VIDEO_DIR="/work/ow52opul-wochenschau_analysis/dat/video_data"
-VIDEOS=("$VIDEO_DIR"/*.mp4)
-VIDEO="${VIDEOS[$SLURM_ARRAY_TASK_ID]}"
+mkdir -p "$OUT_DIR"
 
-echo "Processing: $VIDEO"
+FEATURE_FILES=("$FEATURE_DIR"/*_fixed.pkl)
+FEATURE_FILE="${FEATURE_FILES[$SLURM_ARRAY_TASK_ID]}"
+
+BASENAME=$(basename "$FEATURE_FILE" _fixed.pkl)
+
+VIDEO_PATH="$VIDEO_DIR/${BASENAME}.mp4"
+SCENE_PATH="$SCENE_DIR/${BASENAME}.mp4.scenes.txt"
+
+echo "Processing $BASENAME"
 
 # -------------------------
-# Run TransNetV2
+# Run keyframe extraction
 # -------------------------
 START=$(date +%s)
-
-python /work/xb27qenu-ca_lmske/TransNetV2/inference/transnetv2.py "$VIDEO" --visualize
+python run_keyframes.py \
+  --video_file "$VIDEO_PATH" \
+  --feature_file "$FEATURE_FILE" \
+  --scene_file "$SCENE_PATH" \
+  --output_dir "$OUT_DIR" \
+  --video_name "$BASENAME"
 
 END=$(date +%s)
 echo "Total runtime: $((END - START)) seconds"

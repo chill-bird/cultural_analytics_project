@@ -7,6 +7,9 @@ dat/**.wav
 dat/**.mp3
 dat/tmp
 dat/chapters_flagged
+dat/keyframes
+dat/scenes
+dat/clip_features
 doc/meeting_minutes
 slurm_scripts/logs
 literature_downloads/

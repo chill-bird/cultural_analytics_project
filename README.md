@@ -59,19 +59,31 @@ python -m src.chapters.merge_chapter_info
 ```
 
 ### Select kayframes with LMSKE
-https://github.com/ttharden/Keyframe-Extraction-for-video-summarization
+Extracts keyframe from video as described in https://github.com/ttharden/Keyframe-Extraction-for-video-summarization and saves them.
 
 1. Run TransNetV2 https://github.com/soCzech/TransNetV2
 - Create a virtual environment `python -m venv .venv`
 - Activate virtual environment `source .venv/bin/activate`
-```sh
-pip install tensorflow==2.5.0
-pip install ffmpeg-python pillow
-pip install torch torchvision torchaudio
+- Install requirements `pip install -r requirements_lmske.txt`
 
-module load FFmpeg
+```sh
 git clone https://github.com/soCzech/TransNetV2.git
 ```
+Run `run_transnetv2.sh`
+
+2. Run OpenCLIP
+In the second step ChineseCLIP was swapped for on OpenCLIP model for better compatibility with german context. 
+
+```sh
+git clone https://github.com/ttharden/Keyframe-Extraction-for-video-summarization.git
+```
+Run `run_clip.sh`
+
+3. Extract Keyframes
+- Reformat CLIP Feature Outputs with `reformat_features.py`
+- Replace `init_center.py`in Keyframe-Extraction-for-video-summarization project with `/src/keyframe_selection_LMSKE/init_center.py` (contains bug fix)
+- Replace `KMeans_improvment.py`in Keyframe-Extraction-for-video-summarization project with `/src/keyframe_selection_LMSKE/iKMeans_improvment.py` (contains bug fix)
+- Run `run_keyframe_selection.sh`
 
 ## Acknowledgements
 
