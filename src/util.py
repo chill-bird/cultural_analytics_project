@@ -20,9 +20,20 @@ assert VIDEO_DATA_TSV.is_file(), "Could not find TSV."
 assert CHAPTERS_DATA_TSV.is_file(), "Could not find TSV."
 
 
+def frames_to_timestamp(frame_no: int, fps: int | float) -> str:
+    """Convert a frame number to nn:ss timestamp format in movie"""
+    secs = round(frame_no / fps, 0)
+    return seconds_to_mmss(secs)
+
+
+def frames_to_millisecs(frame_no: int, fps: int | float) -> float:
+    """Convert a frame number to nn:ss timestamp format in movie"""
+    return round((frame_no / fps) * 1000, 0)
+
+
 def mmss_to_ms(mmss: str | None) -> int | None:
     """
-    Convert a 'mm:ss' time string to total milli seconds.
+    Convert a 'mm:ss' time string to total milliseconds.
 
     Example:
         '02:30' -> 150
@@ -36,20 +47,24 @@ def mmss_to_ms(mmss: str | None) -> int | None:
         raise ValueError(f"Invalid time format: {mmss!r}. Expected 'mm:ss'.")
 
 
-def seconds_to_mmss(mmss: int | float | None) -> str:
+def seconds_to_mmss(secs: int | float | None) -> str:
     """
     Convert total seconds to mm:ss format.
 
     Example:
         150 ->  '02:30'
     """
-    if mmss in [None, ""]:
+    if secs in [None, ""]:
         return ""
     try:
-        minutes, seconds = mmss.split(":")
-        return int(minutes) * 60 + int(seconds)
+        total_seconds = int(secs)
+        if total_seconds < 0:
+            total_seconds = 0
+
+        minutes, seconds = divmod(total_seconds, 60)
+        return f"{minutes:02d}:{seconds:02d}"
     except (ValueError, AttributeError):
-        raise ValueError(f"Invalid time format: {mmss!r}. Expected 'mm:ss'.")
+        raise ValueError(f"Invalid time format: {secs!r}. Expected 'mm:ss'.")
 
 
 def get_chapter_mapping_df(filestem: str | None) -> pd.DataFrame | None:
@@ -107,3 +122,22 @@ def get_content_flags_df(filestem: str | None, chapter_name: str) -> pd.DataFram
         return None
     df_flags = pd.read_csv(flags_csv, sep=",")
     return df_flags
+
+
+def get_scenes_df(filestem: str | None) -> pd.DataFrame | None:
+
+    if not filestem:
+        return None
+    SCENES_DIR = Path(os.getenv("SCENES_DIR")).resolve()
+    assert SCENES_DIR.is_dir(), "Could not find directory for flagged content chapters."
+
+    scenes_txt = Path(SCENES_DIR / (filestem + ".mp4.scenes.txt")).resolve()
+    if not scenes_txt.is_file():
+        return None
+
+    df = pd.read_csv(scenes_txt, sep=" ", names=["start_frame", "end_frame"])
+    df["start"] = df["start_frame"].apply(lambda x: frames_to_millisecs(x, 25))
+    df["end"] = df["end_frame"].apply(lambda x: frames_to_millisecs(x, 25))
+    # df["start_ts"] = df["start_frame"].apply(lambda x: frames_to_timestamp(x, 25))
+    # df["end_ts"] = df["end_frame"].apply(lambda x: frames_to_timestamp(x, 25))
+    return df
