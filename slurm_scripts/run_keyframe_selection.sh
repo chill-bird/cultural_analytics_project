@@ -6,7 +6,7 @@
 #SBATCH --gpu-bind=single:1               
 #SBATCH --cpus-per-task=8                
 #SBATCH --mem=32G                        
-#SBATCH --time=05:00:00   
+#SBATCH --time=10:00:00   
 #SBATCH --signal=B:SIGTERM@60 
 #SBATCH --output=logs/keyframes_%A_%a.out
 #SBATCH --error=logs/keyframes_%A_%a.err

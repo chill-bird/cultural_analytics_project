@@ -1,5 +1,6 @@
 # Data
-
+- 238 Videos
+- folgende Episoden fehlen: 581, 582, 585, 587, 588, 590, 603 -> nah geclustert
 - 673 (1943) is only music
 - trotz gleicher Quelle -> Videos entstammen verschiedenen Digitalisierungen -> Unterschiede wie:
   - Logo des Bundesarchivs im Bild zu sehen (siehe 511)
@@ -10,6 +11,7 @@
 
 - 44 Videos ohne Beschreibung des Bundesarchivs
 - 30 mit Vorfilm, 148 ohne
+
 
 ## Blackouts
 
