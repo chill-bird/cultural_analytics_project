@@ -5,6 +5,7 @@
 **.err
 dat/**.wav
 dat/**.mp3
+dat/keyframes
 dat/tmp
 dat/chapters_flagged
 dat/clean_video_data.ipynb

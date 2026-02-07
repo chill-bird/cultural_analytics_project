@@ -15,6 +15,7 @@ from src.util import (
     get_chapters_df,
     get_transcription_df,
     get_content_flags_df,
+    get_scenes_df,
 )
 
 # Paths
@@ -32,7 +33,9 @@ assert TRANSCRIPTIONS_DIR.is_dir(), "Could not find transcriptions directory."
 assert CHAPTERS_TIMESTAMPED_DIR.is_dir(), "Could not find directory for timestamped chapters."
 assert CHAPTERS_FLAGGED_DIR.is_dir(), "Could not find directory for flagged content chapters."
 
-TARGET_FILE = Path(os.getenv("CHAPTERS_DATA_TSV")).resolve()
+# TARGET_FILE = Path(os.getenv("CHAPTERS_DATA_TSV")).resolve()
+TARGET_FILE = Path("/home/elisa/OneDrive/Studium/Cultural_Analytics/project/dat/chapter_data_new.tsv").resolve()
+
 
 COLUMNS_TO_KEEP = [
     "title",
@@ -42,6 +45,7 @@ COLUMNS_TO_KEEP = [
     "is_war_report",
     "is_combat_scene",
     "german_soldiers_depicted",
+    "shot_count",
     "content",
     "audio_transcription",
     "filestem",
@@ -70,64 +74,138 @@ def get_transcription_for_chapter(
     return " ".join(texts)
 
 
+def get_shot_count_for_chapter(
+    df: pd.DataFrame, start: float | int | None, end: float | int | None
+) -> int | None:
+    """Returns number of shots in one chapter."""
+    if start is None or end is None or pd.isna(start) or pd.isna(end):
+        return None
+    return len(df[(df["start"] < end) & (df["end"] > start)])
+
+
 def main() -> None:
     movies_df = pd.read_csv(TSV, sep="\t")
+
     # Only use data where transcription and chapters exist
     movies_df = movies_df[(movies_df["has_transcription"]) & (movies_df["has_chapters"])]
 
-    n = len(movies_df)
     chapters_dfs = []
-    for i, row in movies_df.iterrows():
+    n = len(movies_df)
 
-        print(f"[{i+1}/{n}]{row["title"]}\n")
+    for i, movie in movies_df.iterrows():
+        print(f"[{i + 1}/{n}] {movie['title']}\n")
 
-        # Ground truth: Chapters
-        # For each movie, search chapters
-        chapters_df = get_chapters_df(row["filestem"])
-        chapters_df["title"] = row["title"]
-        chapters_df["filestem"] = row["filestem"]
-        chapters_df["episode"] = row["episode"]
-        chapters_df["year"] = row["year"]
+        # ------------------------------------------------------------------
+        # Ground truth: chapters
+        # ------------------------------------------------------------------
+        chapters_df = get_chapters_df(movie["filestem"]).copy()
         chapters_df["chapter"] = chapters_df["chapter"].astype(str)
 
-        # Merge timestamp mapping to chapters
-        timestamp_mapping_df = get_chapter_mapping_df(row["filestem"])
-        if timestamp_mapping_df is not None and not timestamp_mapping_df.empty:
-            timestamp_mapping_df["chapter"] = timestamp_mapping_df["chapter"].astype(str)
-            chapters_df = chapters_df.merge(timestamp_mapping_df, on="chapter", how="left")
-            chapters_df["start"] = chapters_df["start_mm:ss"].fillna("").apply(mmss_to_ms)
-            chapters_df["end"] = chapters_df["end_mm:ss"].fillna("").apply(mmss_to_ms)
-        else:
+        chapters_df["title"] = movie["title"]
+        chapters_df["filestem"] = movie["filestem"]
+        chapters_df["episode"] = movie["episode"]
+        chapters_df["year"] = movie["year"]
+
+        # Enforce one row per chapter
+        if not chapters_df["chapter"].is_unique:
+            raise ValueError(f"Duplicate chapters in chapters_df for {movie['filestem']}")
+
+        # ------------------------------------------------------------------
+        # Timestamp mapping
+        # ------------------------------------------------------------------
+        timestamp_mapping_df = get_chapter_mapping_df(movie["filestem"])
+        if timestamp_mapping_df is None or timestamp_mapping_df.empty:
             print("No timestamp mapping found.")
             continue
 
-        # Append transcriptions
-        transcriptions_df = get_transcription_df(row["filestem"])
+        timestamp_mapping_df = timestamp_mapping_df.copy()
+        timestamp_mapping_df["chapter"] = timestamp_mapping_df["chapter"].astype(str)
+
+        # Enforce uniqueness
+        if not timestamp_mapping_df["chapter"].is_unique:
+            raise ValueError(f"Duplicate chapters in timestamp_mapping_df for {movie['filestem']}")
+
+        chapters_df = chapters_df.merge(
+            timestamp_mapping_df,
+            on="chapter",
+            how="left",
+            validate="one_to_one",
+        )
+
+        chapters_df["start"] = chapters_df["start_mm:ss"].fillna("").apply(mmss_to_ms)
+        chapters_df["end"] = chapters_df["end_mm:ss"].fillna("").apply(mmss_to_ms)
+
+        # ------------------------------------------------------------------
+        # Transcriptions
+        # ------------------------------------------------------------------
+        transcriptions_df = get_transcription_df(movie["filestem"])
+
         chapters_df["audio_transcription"] = chapters_df.apply(
-            lambda row: get_transcription_for_chapter(transcriptions_df, row["start"], row["end"]),
+            lambda r: get_transcription_for_chapter(transcriptions_df, r["start"], r["end"]),
             axis=1,
         )
 
-        content_flags_dfs = [
-            pd.DataFrame(get_content_flags_df(row["filestem"], c))
-            for c in chapters_df["chapter"].to_list()
-        ]
-        content_flags_df = pd.concat(content_flags_dfs, ignore_index=True)
-        if content_flags_df is not None and not content_flags_df.empty:
+        # ------------------------------------------------------------------
+        # Content flags (aggregated to ONE row per chapter)
+        # ------------------------------------------------------------------
+        flags = []
+        for chapter in chapters_df["chapter"]:
+            df = pd.DataFrame(get_content_flags_df(movie["filestem"], chapter))
+            if not df.empty:
+                flags.append(df)
+
+        if flags:
+            content_flags_df = pd.concat(flags, ignore_index=True)
             content_flags_df["chapter"] = content_flags_df["chapter"].astype(str)
-            content_flags_df = content_flags_df[
-                ["chapter", "is_war_report", "is_combat_scene", "german_soldiers_depicted"]
-            ]
-            chapters_df = chapters_df.merge(content_flags_df, on="chapter", how="left")
+
+            content_flags_df = (
+                content_flags_df[
+                    [
+                        "chapter",
+                        "is_war_report",
+                        "is_combat_scene",
+                        "german_soldiers_depicted",
+                    ]
+                ]
+                .groupby("chapter", as_index=False)
+                .any()
+            )
+
+            chapters_df = chapters_df.merge(
+                content_flags_df,
+                on="chapter",
+                how="left",
+                validate="one_to_one",
+            )
         else:
-            chapters_df["is_war_report"] = None
-            chapters_df["is_combat_scene"] = None
-            chapters_df["german_soldiers_depicted"] = None
+            chapters_df["is_war_report"] = False
+            chapters_df["is_combat_scene"] = False
+            chapters_df["german_soldiers_depicted"] = False
+
+        # ------------------------------------------------------------------
+        # Shot count
+        # ------------------------------------------------------------------
+        scenes_df = get_scenes_df(movie["filestem"])
+
+        chapters_df["shot_count"] = chapters_df.apply(
+            lambda r: get_shot_count_for_chapter(scenes_df, r["start"], r["end"]),
+            axis=1,
+        )
 
         chapters_dfs.append(chapters_df)
 
-    result = pd.concat(chapters_dfs)
+    # ----------------------------------------------------------------------
+    # Final result
+    # ----------------------------------------------------------------------
+    result = pd.concat(chapters_dfs, ignore_index=True)
     result = result[COLUMNS_TO_KEEP]
+
+    result = result.drop_duplicates()
+    # Natural key validation
+    if result.duplicated(subset=["filestem", "chapter"]).any():
+        dupes = result[result.duplicated(subset=["filestem", "chapter"], keep=False)]
+        raise ValueError(f"Duplicate (filestem, chapter) rows detected:\n{dupes}")
+
     result.to_csv(TARGET_FILE, index=False, sep="\t")
 
 

@@ -5,14 +5,14 @@
 ```sh
 .
 ├── dat/  # Datasets directory
-│   ├── chapters/  # Chapters from Bundesarchiv
-│   ├── transcriptions/  # Audio transcriptions
+│   ├── blackout_data/  # Results from black out analysis
 │   ├── chapter_data.tsv  # Chapter data
 │   └── video_data.tsv  # Video data
 ├── doc/  # Documentation files
 └── src/  # Source code
     ├── analysis/
-    └── chapters/  # Timestamp and classify chapters
+    ├── chapters/  # Merge chapter information from several sources
+    └── transcription/  # Transcribe video audio data
 ```
 
 ## Data
@@ -41,6 +41,7 @@ Due to repository size limits, raw data were deleted from repository and, instea
     - **is_war_report**: Chapter is flagged as war report
     - **is_combat_scene**: Chapter is flagged as combat scene
     - **german_soldiers_depicted**: Chapter is flagged as depicting German Soldiers
+    - **shot_count**: Number of shots in this chapter
     - **content**: Chapter content description
     - **audio_transcription**: Audio transcription
     - **filestem**: Filestem from Video ID
