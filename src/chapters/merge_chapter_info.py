@@ -33,9 +33,7 @@ assert TRANSCRIPTIONS_DIR.is_dir(), "Could not find transcriptions directory."
 assert CHAPTERS_TIMESTAMPED_DIR.is_dir(), "Could not find directory for timestamped chapters."
 assert CHAPTERS_FLAGGED_DIR.is_dir(), "Could not find directory for flagged content chapters."
 
-# TARGET_FILE = Path(os.getenv("CHAPTERS_DATA_TSV")).resolve()
-TARGET_FILE = Path("/home/elisa/OneDrive/Studium/Cultural_Analytics/project/dat/chapter_data_new.tsv").resolve()
-
+TARGET_FILE = Path(os.getenv("CHAPTERS_DATA_TSV")).resolve()
 
 COLUMNS_TO_KEEP = [
     "title",
@@ -61,7 +59,7 @@ def get_transcription_for_chapter(
 ) -> str:
     if start is None or end is None or pd.isna(start) or pd.isna(end):
         return ""
-    mask = (df["start"] < end) & (df["end"] > start)
+    mask = (df["start"] <= end) & (df["end"] >= start)
     texts = (
         df.loc[mask, "text"]
         .dropna()  # removes NaN / pd.NA
@@ -80,7 +78,7 @@ def get_shot_count_for_chapter(
     """Returns number of shots in one chapter."""
     if start is None or end is None or pd.isna(start) or pd.isna(end):
         return None
-    return len(df[(df["start"] < end) & (df["end"] > start)])
+    return len(df[(df["start"] <= end) & (df["end"] >= start)])
 
 
 def main() -> None:
