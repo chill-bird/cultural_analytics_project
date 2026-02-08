@@ -1,4 +1,13 @@
-# README
+# Propagandistische Stilmittel in der Darstellung der Deutschen Wehrmacht in der Deutschen Wochenschau im Kriegsverlauf 1940-1945
+
+**Q1**: Gibt es einen Zusammenhang zwischen den filmischen Gestaltungsmerkmalen der Deutschen Wochenschau und dem Kriegsgeschehen?
+
+- Siegeswochenschauen: "langanhaltende Schwenks, die Vorliebe für Totalen und einen ruhiger Schnitt" (Bartels, 2010, S. 478), "kompakte Aufnahmen der Wehrmacht, welche Kraft und Stärke vermitteln sollten, um die Moral und Siegeszuversicht in den eigenen Reihen zu stärken" (Bartels, 2010, S. 248)
+- ab 1941: "nun rasche Szenenwechsel, die stärkere Verwendung von Nahaufnahmen sowie ein Anwachsen des Kommentars, der die im Film gezeigte Situation näher erläutern musste" (Bartels, 2010, S. 478)
+
+**Q2**: Wie wurden die Rollen der Wehrmacht in der Deutschen Wochenschau während des zweiten Weltkriegs dargestellt und propagandistischen Narrative wurden eingesetzt?
+
+- "Das bestimmende Moment der Kriegsberichterstattung lag jetzt nicht mehr in der Betonung der scheinbar unaufhaltsamen Vormarsches de deutschen Wehrmacht, sondern in der Herausstellung soldatischen Heldentums" (Bartels, 2010, S. 489)
 
 ## Project structure
 
