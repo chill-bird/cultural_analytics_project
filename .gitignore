@@ -3,6 +3,9 @@
 # Project-specific
 **.out
 **.err
+.env.cluster
+notes_cluster.md
+project.code-workspace
 dat/**.wav
 dat/**.mp3
 dat/keyframes
@@ -14,12 +17,7 @@ slurm_scripts/logs
 literature_downloads/
 src/crawler/
 src/transcribe/convert_mp4_to_mp3.sh
-.env.cluster
-notes_cluster.md
-project.code-workspace
-
-**/best_model_mild.pt
-**/best_model_advanced.pt
+src/tmp.ipynb
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
