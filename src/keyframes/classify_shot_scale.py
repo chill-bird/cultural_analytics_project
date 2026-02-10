@@ -54,7 +54,7 @@ SHOT_PROMPTS = {
     # "Divider": ["white letters on black screen"],
 }
 
-MODEL_NAME = "openai/clip-vit-base-patch32"
+MODEL_NAME = "openai/clip-vit-large-patch14"
 MODEL = CLIPModel.from_pretrained(MODEL_NAME).to("cuda")
 PROCESSOR = CLIPProcessor.from_pretrained(MODEL_NAME, use_fast=False)
 MODEL.eval()
@@ -148,11 +148,13 @@ def main() -> None:
     for r in batch_results:
         r["filestem"] = row["filestem"]
         r["chapter"] = row["chapter"]
-
-    # Save results
-    df = pd.DataFrame(batch_results)
-    df.to_csv(result_filepath, index=False)
-    print(f"Results saved to {result_filepath}")
+    if batch_results:
+        # Save results
+        df = pd.DataFrame(batch_results)
+        df.to_csv(result_filepath, index=False)
+        print(f"Results saved to {result_filepath}")
+    else:
+        print("No images found.")
 
 
 if __name__ == "__main__":
