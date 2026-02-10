@@ -118,6 +118,14 @@ Merges information from timestamps and chapter descriptions to one TSV file `CHA
 python -m src.chapters.merge_chapter_info
 ```
 
+### Classify shot scale
+
+Classifies Shot scales in keyframes of chapters using CLIP.
+
+```sh
+python -m src.keyframes.classify_shot_scale
+```
+
 ## Acknowledgements
 
 Computations for this work were done (in part) using resources of the Leipzig University Computing Center.

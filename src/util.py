@@ -9,6 +9,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import pandas as pd
 import os
+from PIL import Image
 
 # Paths
 load_dotenv()
@@ -21,14 +22,19 @@ assert CHAPTERS_DATA_TSV.is_file(), "Could not find TSV."
 
 
 def frames_to_timestamp(frame_no: int, fps: int | float) -> str:
-    """Convert a frame number to nn:ss timestamp format in movie"""
+    """Convert a frame number to mm:ss timestamp format in movie"""
     secs = round(frame_no / fps, 0)
     return seconds_to_mmss(secs)
 
 
 def frames_to_millisecs(frame_no: int, fps: int | float) -> float:
-    """Convert a frame number to nn:ss timestamp format in movie"""
+    """Convert a frame number milliseconds"""
     return round((frame_no / fps) * 1000, 0)
+
+
+def millisecs_to_frames(millisecs: int | float, fps: int) -> int:
+    """Converts milliseconds to frame number."""
+    return int(round(fps * (millisecs / 1000), 0))
 
 
 def mmss_to_ms(mmss: str | None) -> int | None:
@@ -141,3 +147,21 @@ def get_scenes_df(filestem: str | None) -> pd.DataFrame | None:
     # df["start_ts"] = df["start_frame"].apply(lambda x: frames_to_timestamp(x, 25))
     # df["end_ts"] = df["end_frame"].apply(lambda x: frames_to_timestamp(x, 25))
     return df
+
+
+def get_keyframe_paths(filestem: str, start_frame: int, end_frame: int) -> list[Path]:
+    """Returns list of keyframes between start_frame and end_frame of movie belonging to filestem"""
+
+    keyframes_dir = Path(os.getenv("KEYFRAMES_DIR")).resolve()
+    movie_dir = keyframes_dir / filestem
+    paths = []
+    for p in movie_dir.glob("*.jpg"):
+        try:
+            frame_no = int(p.stem)
+        except ValueError:
+            continue  # skip non-numeric filenames
+
+        if start_frame <= frame_no <= end_frame:
+            paths.append(p)
+
+    return sorted(paths)
