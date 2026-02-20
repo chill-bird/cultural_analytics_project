@@ -13,15 +13,17 @@
 
 ```sh
 .
-├── dat/  # Datasets directory
-│   ├── blackout_data/  # Results from black out analysis
-│   ├── chapter_data.tsv  # Chapter data
-│   └── video_data.tsv  # Video data
+├── dat/
+│   ├── chapter_data.tsv  # Aggregated chapter data
+│   └── video_data.tsv  # Aggregated video data
 ├── doc/  # Documentation files
 └── src/  # Source code
-    ├── analysis/
-    ├── chapters/  # Merge chapter information from several sources
-    └── transcription/  # Transcribe video audio data
+    ├── analysis/  # Data analysis
+    ├── chapters/  # Extract and merge chapter information from several sources
+    ├── keyframes/  # Keyframe classification scripts
+    ├── transcribe/  # Audio data transcription and clean-up scripts
+    ├── split/  # Blackout cut detection scripts
+    └── util.py  # Utility functions
 ```
 
 ## Data

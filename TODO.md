@@ -12,7 +12,7 @@
 
 ## Nice-to-have
 
-- [ ] Explore word count for military sections
+- [x] Explore word count for military sections
 
 ## Pipeline
 
