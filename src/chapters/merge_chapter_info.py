@@ -10,12 +10,13 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 from src.util import (
-    mmss_to_ms,
     get_chapter_mapping_df,
     get_chapters_df,
     get_transcription_df,
     get_content_flags_df,
     get_scenes_df,
+    mmss_to_ms,
+    millisecs_to_frames,
 )
 
 # Paths
@@ -51,6 +52,8 @@ COLUMNS_TO_KEEP = [
     "year",
     "start",
     "end",
+    "start_frame",
+    "end_frame",
 ]
 
 
@@ -109,14 +112,14 @@ def main() -> None:
             raise ValueError(f"Duplicate chapters in chapters_df for {movie['filestem']}")
 
         # ------------------------------------------------------------------
-        # Timestamp mapping
+        # Timestamp & Frame mapping
         # ------------------------------------------------------------------
         timestamp_mapping_df = get_chapter_mapping_df(movie["filestem"])
         if timestamp_mapping_df is None or timestamp_mapping_df.empty:
             print("No timestamp mapping found.")
             continue
 
-        timestamp_mapping_df = timestamp_mapping_df.copy()
+        # timestamp_mapping_df = timestamp_mapping_df.copy()
         timestamp_mapping_df["chapter"] = timestamp_mapping_df["chapter"].astype(str)
 
         # Enforce uniqueness
@@ -132,6 +135,14 @@ def main() -> None:
 
         chapters_df["start"] = chapters_df["start_mm:ss"].fillna("").apply(mmss_to_ms)
         chapters_df["end"] = chapters_df["end_mm:ss"].fillna("").apply(mmss_to_ms)
+
+        chapters_df.loc[chapters_df["start"].notna(), "start_frame"] = chapters_df.loc[
+            chapters_df["start"].notna(), "start"
+        ].apply(lambda x: millisecs_to_frames(int(x), float(movie["fps"])))
+
+        chapters_df.loc[chapters_df["end"].notna(), "end_frame"] = chapters_df.loc[
+            chapters_df["end"].notna(), "end"
+        ].apply(lambda x: millisecs_to_frames(int(x), float(movie["fps"])))
 
         # ------------------------------------------------------------------
         # Transcriptions

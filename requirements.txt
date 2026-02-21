@@ -9,6 +9,7 @@ openai
 openai-whisper
 opencv-python
 pandas
+pillow
 playwright
 python-dotenv
 seaborn
