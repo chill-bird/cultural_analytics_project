@@ -15,6 +15,7 @@
 .
 ├── dat/
 │   ├── chapter_data.tsv  # Aggregated chapter data
+│   └── keyframe_content_data.tsv  # Aggregated keyframe classification data
 │   └── video_data.tsv  # Aggregated video data
 ├── doc/  # Documentation files
 └── src/  # Source code
@@ -46,7 +47,7 @@ Due to repository size limits, raw data were deleted from repository and, instea
 
 2. `chapter_data.tsv`
     - **titel**: Title of the episode
-    - **chapter**: Chapter title
+    - **chapter**: Chapter number
     - **start_mm:ss**: Start timestamp in mm:ss format
     - **end_mm:ss**: End timestamp in mm:ss format
     - **is_war_report**: Chapter is flagged as war report
@@ -60,6 +61,14 @@ Due to repository size limits, raw data were deleted from repository and, instea
     - **year**: Year
     - **start**: Start timestamp in milliseconds
     - **end**: End timestamp in milliseconds
+
+3. `keyframe_content_data.tsv`
+    - **filestem**: Filestem from Video ID
+    - **chapter**: Chapter number
+    - **frame**: Frame number
+    - **prediction**: Predicted class
+    - **score**: Similarity score
+
 
 ### Chapter flags
 
