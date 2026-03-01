@@ -150,7 +150,7 @@ def get_scenes_df(filestem: str | None) -> pd.DataFrame | None:
 
 
 def get_keyframe_paths(filestem: str, start_frame: int, end_frame: int) -> list[Path]:
-    """Returns list of keyframes between start_frame and end_frame of movie belonging to filestem"""
+    """Returns list of paths to keyframes between start_frame and end_frame of movie belonging to filestem"""
 
     keyframes_dir = Path(os.getenv("KEYFRAMES_DIR")).resolve()
     movie_dir = keyframes_dir / filestem
@@ -165,3 +165,15 @@ def get_keyframe_paths(filestem: str, start_frame: int, end_frame: int) -> list[
             paths.append(p)
 
     return sorted(paths)
+
+
+def get_keyframe_path(filestem: str, frame: int) -> Path | None:
+    """Returns path to keyframe image of frame number of movie belonging to filestem"""
+
+    keyframes_dir = Path(os.getenv("KEYFRAMES_DIR")).resolve()
+    movie_dir = keyframes_dir / filestem
+    path = movie_dir / f"{frame}.jpg"
+    if path.is_file():
+        return path
+    else:
+        return None
