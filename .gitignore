@@ -12,7 +12,7 @@ dat/keyframes
 dat/tmp
 dat/chapters_flagged
 dat/clean_video_data.ipynb
-dat/keyframes
+dat/narratives
 dat/scenes
 dat/clip_features
 dat/shot_detection

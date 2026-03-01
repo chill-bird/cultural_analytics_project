@@ -153,6 +153,16 @@ Classifies Shot scales in keyframes of chapters using CLIP.
 python -m src.keyframes.classify_shot_scale
 ```
 
+
+### Detect narratives
+
+Detect narratives used in the videos and commentary using OpenAI GPT-4.1. Before starting script, an API key at OpenAI is required: <https://platform.openai.com/api-keys> and to be placed inside `.env` file.
+
+```sh
+python -m src.narrative_detetction.detect_narratives
+```
+
+
 ## Acknowledgements
 
 Computations for this work were done (in part) using resources of the Leipzig University Computing Center.

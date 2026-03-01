@@ -1,0 +1,77 @@
+{
+  "unit_of_analysis": "video_chapter",
+
+   "actor_configuration": [
+    "individual_hero",
+    "collective_military",
+    "civilian_collective",
+    "enemy_focus",
+    "mixed_interaction"
+  ],
+
+
+  "narrative_framing": [
+    "heroic_combat",
+    "defensive_war",
+    "liberation_mission",
+    "civilizational_struggle",
+    "comradely_front",
+    "technological_modernity",
+    "sacrificial_martyrdom",
+    "soldier_as_victim",
+    "inevitable_victory",
+    "administrative_normality",
+    "occupation_normalization",
+    "humanitarian_relief",
+    "cultural_guardianship",
+    "none"
+  ],
+
+  "legitimation_strategy": [
+    "defensive",
+    "retaliatory",
+    "preventive",
+    "civilizing",
+    "ideological",
+    "existential_threat",
+    "humanitarian",
+    "none"
+  ],
+
+  "enemy_moral_status": [
+    "legitimate_opponent",
+    "weaker_enemy",
+    "criminalized_enemy",
+    "dehumanized_enemy",
+    "existential_threat",
+    "none"
+  ],
+
+  "embodiment_mode": [
+    "disciplined_masculinity",
+    "wounded_body",
+    "invulnerable_body",
+    "eroticized_body",
+    "erotic_renunciation",
+    "emotionally_restrained",
+    "emotional_expressivity",
+    "neutral_military_presence",
+    "none"
+  ],
+
+  "violence_visibility": [
+    "shown",
+    "implied",
+    "absent"
+  ],
+
+  "agency_level": [
+    "low",
+    "medium",
+    "high"
+  ],
+
+  "narrative_summary": "2–3 sentence integrated narrative assessment",
+
+  "confidence_score": "0.0–1.0"
+}
