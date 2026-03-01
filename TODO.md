@@ -13,6 +13,8 @@
 ## Nice-to-have
 
 - [x] Explore word count for military sections
+- [ ] Find missing content class data on server
+
 
 ## Pipeline
 
