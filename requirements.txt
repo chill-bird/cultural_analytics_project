@@ -16,5 +16,6 @@ seaborn
 statsmodels
 tqdm
 torch
-transformers
 torchvision
+transformers
+tueplots
