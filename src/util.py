@@ -16,9 +16,53 @@ load_dotenv()
 
 VIDEO_DATA_TSV = Path(os.getenv("VIDEO_DATA_TSV")).resolve()
 CHAPTERS_DATA_TSV = Path(os.getenv("CHAPTERS_DATA_TSV")).resolve()
+KEYFRAME_CLASSIFICATION_TSV = Path(os.getenv("KEYFRAME_CLASSIFICATION_TSV")).resolve()
+DOC_DIR = Path(Path(__file__).parent.parent.resolve() / "doc").resolve()
 
-assert VIDEO_DATA_TSV.is_file(), "Could not find TSV."
-assert CHAPTERS_DATA_TSV.is_file(), "Could not find TSV."
+assert VIDEO_DATA_TSV.is_file(), "Could not find video data TSV."
+assert CHAPTERS_DATA_TSV.is_file(), "Could not find chapters data TSV."
+
+CHAPTER_BLACKLIST = [
+    {
+        # Is map animation of combat developments
+        "filestem": "591_1942",
+        "chapter": "5",
+    },
+]
+
+def get_filtered_chapters_df(class_label: str) -> pd.DataFrame():
+    """Returns chapter dataframe filtered for chapters classified with class_label."""
+    assert class_label in [
+        "combat",
+        "war_report",
+        "soldiers",
+    ], 'filter keyword must be one of ["combat", "war_report", "soldiers"]'
+
+    # Load chapters
+    tsv_file = Path(CHAPTERS_DATA_TSV).resolve()
+    df = pd.read_csv(tsv_file, sep="\t")
+
+    # Apply blacklist
+    for entry in CHAPTER_BLACKLIST:
+        df = df[~((df["filestem"] == entry["filestem"]) & (df["chapter"] == entry["chapter"]))]
+
+    # Only data with timestamps
+    df = df[(df["start"].notna()) & (df["end"].notna())]
+    len(df)
+
+    match class_label:
+        case "combat":
+            df = df[(df["is_combat_scene"].notna()) & (df["is_combat_scene"])]
+        case "war_report":
+            df = df[(df["is_war_report"].notna()) & (df["is_war_report"])]
+        case "soldiers":
+            df = df[(df["german_soldiers_depicted"].notna()) & (df["german_soldiers_depicted"])]
+        case _:
+            raise AssertionError(
+                'filter keyword must be one of ["combat", "war_report", "soldiers"]'
+            )
+
+    return df
 
 
 def frames_to_timestamp(frame_no: int, fps: int | float) -> str:
