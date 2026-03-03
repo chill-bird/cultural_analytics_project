@@ -79,6 +79,7 @@ Due to repository size limits, raw data were deleted from repository and, instea
 ## Requirements
 
 - Python 3.11 to 3.13
+- Git LFS
 
 ## Getting Started
 

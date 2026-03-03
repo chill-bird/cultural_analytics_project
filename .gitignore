@@ -6,6 +6,7 @@
 .env.cluster
 notes_cluster.md
 project.code-workspace
+references.bib
 dat/**.wav
 dat/**.mp3
 dat/keyframes
@@ -17,6 +18,7 @@ dat/scenes
 dat/clip_features
 dat/shot_detection
 doc/meeting_minutes
+doc/report
 slurm_scripts/logs
 literature_downloads/
 src/crawler/
