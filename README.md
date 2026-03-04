@@ -69,7 +69,6 @@ Due to repository size limits, raw data were deleted from repository and, instea
     - **prediction**: Predicted class
     - **score**: Similarity score
 
-
 ### Chapter flags
 
 `is_war_report`: The scene primarily focuses on reporting on the ongoing war and German troops are involved.
@@ -87,6 +86,14 @@ Due to repository size limits, raw data were deleted from repository and, instea
 - Activate virtual environment `source .venv/bin/activate`
 - Install requirements `pip install -r requirements.txt`
 - Copy `.env.example` and save as `.env`. Add environment values to environment variables.
+
+## Analysis
+
+### Q1: Analyze formal features in combat scenes
+
+```sh
+python -m src.analysis.q1_formal_features
+```
 
 ## Data preprocessing
 
@@ -131,9 +138,11 @@ python -m src.chapters.merge_chapter_info
 ```
 
 ### Select kayframes with LMSKE
-Extracts keyframe from video as described in https://github.com/ttharden/Keyframe-Extraction-for-video-summarization and saves them.
 
-1. Run TransNetV2 https://github.com/soCzech/TransNetV2
+Extracts keyframe from video as described in <https://github.com/ttharden/Keyframe-Extraction-for-video-summarization> and saves them.
+
+1. Run TransNetV2 <https://github.com/soCzech/TransNetV2>
+
 - Create a virtual environment `python -m venv .venv`
 - Activate virtual environment `source .venv/bin/activate`
 - Install requirements `pip install -r requirements_lmske.txt`
@@ -141,17 +150,20 @@ Extracts keyframe from video as described in https://github.com/ttharden/Keyfram
 ```sh
 git clone https://github.com/soCzech/TransNetV2.git
 ```
+
 Run `run_transnetv2.sh`
 
-2. Run OpenCLIP
-In the second step ChineseCLIP was swapped for on OpenCLIP model for better compatibility with german context. 
+1. Run OpenCLIP
+In the second step ChineseCLIP was swapped for on OpenCLIP model for better compatibility with german context.
 
 ```sh
 git clone https://github.com/ttharden/Keyframe-Extraction-for-video-summarization.git
 ```
+
 Run `run_clip.sh`
 
-3. Extract Keyframes
+1. Extract Keyframes
+
 - Reformat CLIP Feature Outputs with `reformat_features.py`
 - Replace `init_center.py`in Keyframe-Extraction-for-video-summarization project with `/src/keyframe_selection_LMSKE/init_center.py` (contains bug fix)
 - Replace `KMeans_improvment.py`in Keyframe-Extraction-for-video-summarization project with `/src/keyframe_selection_LMSKE/iKMeans_improvment.py` (contains bug fix)
@@ -165,7 +177,6 @@ Classifies Shot scales in keyframes of chapters using CLIP.
 python -m src.keyframes.classify_shot_scale
 ```
 
-
 ### Detect narratives
 
 Detect narratives used in the videos and commentary using OpenAI GPT-4.1. Before starting script, an API key at OpenAI is required: <https://platform.openai.com/api-keys> and to be placed inside `.env` file.
@@ -173,7 +184,6 @@ Detect narratives used in the videos and commentary using OpenAI GPT-4.1. Before
 ```sh
 python -m src.narrative_detetction.detect_narratives
 ```
-
 
 ## Acknowledgements
 

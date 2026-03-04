@@ -40,9 +40,9 @@ def plot_word_counts_per_episode(
         f"Standard deviation: {std:.2f}"
     )
 
-    plt.figure(figsize=(6, 4))
+    fig, ax = plt.subplots(figsize=(6, 4))
 
-    ax = sns.scatterplot(
+    sns.scatterplot(
         data=df_sorted,
         x="episode",
         y="word_count_per_minute",
@@ -71,6 +71,18 @@ def plot_word_counts_per_episode(
         verticalalignment="top",
         bbox=dict(boxstyle="round", color="lightgrey", alpha=0.4),
     )
+
+    # Vertical lines for years
+    year_positions = df.groupby("year")["episode"].min()
+    year_positions = year_positions[1:]
+    for ep in year_positions:
+        ax.axvline(x=ep, color="lightgrey", linestyle="-", alpha=0.5)
+
+    # Secondary x-axis for years
+    secax = ax.secondary_xaxis("top")
+    secax.set_xticks(year_positions.values)  # positions at first episode of each year
+    secax.set_xticklabels(year_positions.index)  # show year labels
+    secax.set_xlabel("Year")
 
     plt.xlim(min(df["episode"]) - 10, max(df["episode"]) + 10)
     plt.ylim(0, 160)
@@ -105,7 +117,7 @@ def plot_shot_duration_per_episode(
         f"Standard deviation: {std:.2f}"
     )
 
-    plt.figure(figsize=(6, 4))
+    fig, ax = plt.subplots(figsize=(6, 4))
 
     ax = sns.scatterplot(
         data=df_sorted,
@@ -136,6 +148,18 @@ def plot_shot_duration_per_episode(
         verticalalignment="top",
         bbox=dict(boxstyle="round", color="lightgrey", alpha=0.4),
     )
+
+    # Vertical lines for years
+    year_positions = df.groupby("year")["episode"].min()
+    year_positions = year_positions[1:]
+    for ep in year_positions:
+        ax.axvline(x=ep, color="lightgrey", linestyle="-", alpha=0.5)
+
+    # Secondary x-axis for years
+    secax = ax.secondary_xaxis("top")
+    secax.set_xticks(year_positions.values)  # positions at first episode of each year
+    secax.set_xticklabels(year_positions.index)  # show year labels
+    secax.set_xlabel("Year")
 
     plt.xlim(min(df["episode"]) - 10, max(df["episode"]) + 10)
     plt.xlabel("Episoden")
