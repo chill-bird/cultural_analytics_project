@@ -8,7 +8,7 @@ if (-not (Test-Path $logDir)) {
 }
 
 # Loop over first 20 episodes
-for ($SLURM_ARRAY_TASK_ID = 72; $SLURM_ARRAY_TASK_ID -le 237; $SLURM_ARRAY_TASK_ID++) {
+for ($SLURM_ARRAY_TASK_ID = 0; $SLURM_ARRAY_TASK_ID -le 237; $SLURM_ARRAY_TASK_ID++) {
     Write-Host "Processing episode $SLURM_ARRAY_TASK_ID"
     
     # Set the environment variable so Python sees it
