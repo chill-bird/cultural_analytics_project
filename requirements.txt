@@ -4,6 +4,7 @@ faster-whisper
 imageio
 imageio-ffmpeg
 matplotlib
+networkx 
 numpy
 openai
 openai-whisper
@@ -12,6 +13,8 @@ pandas
 pillow
 playwright
 python-dotenv
+scikit-learn
+ruptures
 seaborn
 statsmodels
 tqdm
