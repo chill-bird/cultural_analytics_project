@@ -82,6 +82,14 @@ PROCESSOR = CLIPProcessor.from_pretrained(MODEL_NAME, use_fast=False)
 MODEL.eval()
 
 
+def file_not_existent(row: pd.Series) -> bool:
+    """Returns True if file missing."""
+
+    result_filename = row["filestem"] + "_" + row["chapter"] + ".csv"
+    result_filepath = Path(CONTENT_CLASSIFICATIONS_DIR / result_filename).resolve()
+    return not result_filepath.is_file()
+
+
 def encode_prompts(prompts_dict: dict) -> dict[str, torch.Tensor]:
     text_embeddings = {}
     for label, prompts in prompts_dict.items():
@@ -152,9 +160,12 @@ def main() -> None:
         (df["german_soldiers_depicted"].notna()) & (df["german_soldiers_depicted"])
         | (df["is_combat_scene"].notna()) & (df["is_combat_scene"])
     ]
+    # Only for chapters where classification not already exists
+    df["classification_missing"] = df.apply(lambda row: file_not_existent(row), axis=1)
+    df = df[df["classification_missing"]]
 
-    # task_id = int(os.environ.get("SLURM_ARRAY_TASK_ID", 0))
-    task_id = 3
+    task_id = int(os.environ.get("SLURM_ARRAY_TASK_ID", 0))
+    # task_id = 3
 
     row = df.iloc[task_id]
     print(f"[{task_id+1}/{len(df)}] Processing {row['title']} Chapter {row['chapter']}...")
