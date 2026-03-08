@@ -15,7 +15,12 @@ plt.rcParams.update(
     {
         "figure.dpi": 200,
         # "figure.figsize": (5.5324802778 / 1.5, 8.6938975 / 3*1.5),
-        "axes.titlesize": 10,
+        "font.size": 10,  # base font size
+        "axes.titlesize": 14,  # title size
+        "axes.labelsize": 12,  # x and y label size
+        "xtick.labelsize": 10,  # x tick labels
+        "ytick.labelsize": 10,  # y tick labels
+        "legend.fontsize": 10,  # legend text
     }
 )
 # Color palette
@@ -29,7 +34,7 @@ def plot_word_counts_per_episode(
 ):
     """Creates plot for word counts per episode"""
 
-    description = "Wortanzahl pro Minute in DWS-Beiträgen zu Kampfgeschehen"
+    description = "Wortanzahl pro Minute der Sujets"
 
     df_sorted = df.sort_values(["episode", "chapter"]).reset_index(drop=True)
 
@@ -40,7 +45,7 @@ def plot_word_counts_per_episode(
         f"Standard deviation: {std:.2f}"
     )
 
-    fig, ax = plt.subplots(figsize=(6, 4))
+    fig, ax = plt.subplots(figsize=(4, 4))
 
     sns.scatterplot(
         data=df_sorted,
@@ -49,8 +54,8 @@ def plot_word_counts_per_episode(
         hue="year",
         alpha=0.5,
         palette=palette,
-        legend="auto",
-        s=40,
+        legend=None,
+        s=30,
     )
 
     sns.regplot(
@@ -81,23 +86,23 @@ def plot_word_counts_per_episode(
     # Secondary x-axis for years
     secax = ax.secondary_xaxis("top")
     secax.set_xticks(year_positions.values)  # positions at first episode of each year
-    secax.set_xticklabels(year_positions.index)  # show year labels
-    secax.set_xlabel("Year")
+    secax.set_xticklabels(year_positions.index, fontsize=8)  # show year labels
+    # secax.set_xlabel("Year")
 
     plt.xlim(min(df["episode"]) - 10, max(df["episode"]) + 10)
     plt.ylim(0, 160)
     plt.xlabel("Episoden")
     plt.ylabel("Wortanzahl pro Minute")
     plt.title(f"{description} (n={len(df_sorted)})")
-    sns.move_legend(
-        ax,
-        "lower center",
-        bbox_to_anchor=(0.5, -0.2),
-        ncol=6,
-        title=None,
-        frameon=False,
-        # sns.move_legend(ax, "upper right", bbox_to_anchor=(1, 1))
-    )
+    # sns.move_legend(
+    #     ax,
+    #     "lower center",
+    #     bbox_to_anchor=(0.5, -0.2),
+    #     ncol=6,
+    #     title=None,
+    #     frameon=False,
+    #     # sns.move_legend(ax, "upper right", bbox_to_anchor=(1, 1))
+    # )
     return plt
 
 
@@ -106,7 +111,7 @@ def plot_shot_duration_per_episode(
 ):
     """Creates plot for shot duration per episode"""
 
-    description = "Durchschnittliche Shot-Dauer in DWS-Beiträgen zu Kampfgeschehen"
+    description = "Durchschnittl. Shot-Dauer der Sujets"
 
     df_sorted = df.sort_values(["episode", "chapter"]).reset_index(drop=True)
 
@@ -117,7 +122,7 @@ def plot_shot_duration_per_episode(
         f"Standard deviation: {std:.2f}"
     )
 
-    fig, ax = plt.subplots(figsize=(6, 4))
+    fig, ax = plt.subplots(figsize=(4, 4))
 
     ax = sns.scatterplot(
         data=df_sorted,
@@ -126,8 +131,8 @@ def plot_shot_duration_per_episode(
         hue="year",
         alpha=0.5,
         palette=palette,
-        legend="auto",
-        s=40,
+        legend=None,
+        s=30,
     )
 
     sns.regplot(
@@ -158,22 +163,23 @@ def plot_shot_duration_per_episode(
     # Secondary x-axis for years
     secax = ax.secondary_xaxis("top")
     secax.set_xticks(year_positions.values)  # positions at first episode of each year
-    secax.set_xticklabels(year_positions.index)  # show year labels
-    secax.set_xlabel("Year")
+    secax.set_xticklabels(year_positions.index, fontsize=8)  # show year labels
+    # secax.set_xlabel("Year")
 
     plt.xlim(min(df["episode"]) - 10, max(df["episode"]) + 10)
+    plt.ylim(0, 17)
     plt.xlabel("Episoden")
-    plt.ylabel("Durchschnittliche Shot-Dauer in Sekunden")
+    plt.ylabel("Durchschnittl. Shot-Dauer in Sekunden")
     plt.title(f"{description} (n={len(df_sorted)})")
-    sns.move_legend(
-        ax,
-        "lower center",
-        bbox_to_anchor=(0.5, -0.2),
-        ncol=6,
-        title=None,
-        frameon=False,
-        # sns.move_legend(ax, "upper right", bbox_to_anchor=(1, 1))
-    )
+    # sns.move_legend(
+    #     ax,
+    #     "lower center",
+    #     bbox_to_anchor=(0.5, -0.2),
+    #     ncol=6,
+    #     title=None,
+    #     frameon=False,
+    #     # sns.move_legend(ax, "upper right", bbox_to_anchor=(1, 1))
+    # )
 
     return plt
 
@@ -183,8 +189,8 @@ def plot_shot_scale_per_episode(
 ):
     """Creates plot for shot scale ratio per episode"""
 
-    description = "Entwicklung der Shot Scales in DWS-Beiträgen zu Kampfgeschehen"
-    
+    description = "Entwicklung der Shot Scales der Sujets"
+
     # Aggregate per episode
     df_episode = (
         df.groupby(["episode", "year"], as_index=False)
@@ -265,8 +271,8 @@ def plot_shot_scale_per_episode(
     ax.set_ylim(0, 1)
     ax.set_xlim(df["episode"].min(), df["episode"].max())
 
-    leg = ax.legend(loc="upper right", frameon=True)
+    leg = ax.legend(loc="upper right", frameon=True, fontsize=9)
     leg.get_frame().set_facecolor("white")
-    leg.get_frame().set_alpha(0.9)
+    leg.get_frame().set_alpha(0.7)
 
     return plt

@@ -21,6 +21,7 @@ doc/meeting_minutes
 doc/report
 slurm_scripts/logs
 literature_downloads/
+src/analysis/notebooks
 src/crawler/
 src/transcribe/convert_mp4_to_mp3.sh
 src/tmp.ipynb
