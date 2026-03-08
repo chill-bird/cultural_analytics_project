@@ -111,7 +111,7 @@ def plot_shot_duration_per_episode(
 ):
     """Creates plot for shot duration per episode"""
 
-    description = "Durchschnittl. Shot-Dauer der Sujets"
+    description = "Einstellungsdauer der Sujets"
 
     df_sorted = df.sort_values(["episode", "chapter"]).reset_index(drop=True)
 
@@ -169,7 +169,7 @@ def plot_shot_duration_per_episode(
     plt.xlim(min(df["episode"]) - 10, max(df["episode"]) + 10)
     plt.ylim(0, 17)
     plt.xlabel("Episoden")
-    plt.ylabel("Durchschnittl. Shot-Dauer in Sekunden")
+    plt.ylabel("Durchschnittl. Einstellungsdauer in sek")
     plt.title(f"{description} (n={len(df_sorted)})")
     # sns.move_legend(
     #     ax,
@@ -189,7 +189,7 @@ def plot_shot_scale_per_episode(
 ):
     """Creates plot for shot scale ratio per episode"""
 
-    description = "Entwicklung der Shot Scales der Sujets"
+    description = "Entwicklung der Einstellungsgrößen der Sujets"
 
     # Aggregate per episode
     df_episode = (
@@ -266,7 +266,7 @@ def plot_shot_scale_per_episode(
         bbox=dict(boxstyle="round", color="lightgrey", alpha=0.4),
     )
     ax.set_xlabel("Episode")
-    ax.set_ylabel("Anteil der Shot Scales")
+    ax.set_ylabel("Anteil der Einstellungsgrößen")
     ax.set_title(f"{description} (n={len(df_episode)})")
     ax.set_ylim(0, 1)
     ax.set_xlim(df["episode"].min(), df["episode"].max())

@@ -50,7 +50,6 @@ Due to repository size limits, raw data were deleted from repository and, instea
     - **chapter**: Chapter number
     - **start_mm:ss**: Start timestamp in mm:ss format
     - **end_mm:ss**: End timestamp in mm:ss format
-    - **is_war_report**: Chapter is flagged as war report
     - **is_combat_scene**: Chapter is flagged as combat scene
     - **german_soldiers_depicted**: Chapter is flagged as depicting German Soldiers
     - **shot_count**: Number of shots in this chapter
