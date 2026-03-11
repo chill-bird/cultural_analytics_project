@@ -21,6 +21,7 @@ from src.analysis.q1_plots import (
     plot_word_counts_per_episode,
     plot_shot_duration_per_episode,
     plot_shot_scale_per_episode,
+    plot_top_to_bottom_similarities,
 )
 
 # -----------------------------------------------------------------
@@ -63,6 +64,7 @@ class ColumnStats:
 FIG_WORD_COUNTS_FILE = Path(DOC_DIR / "imgs" / "word_counts.pdf").resolve()
 FIG_SHOT_SCALE_FILE = Path(DOC_DIR / "imgs" / "shot_scale.pdf").resolve()
 FIG_SHOT_DURATION_FILE = Path(DOC_DIR / "imgs" / "shot_duration.pdf").resolve()
+FIG_TOP_TO_BOTTOM_CLASSES = Path(DOC_DIR / "imgs" / "top_to_bottom_sims_shot_scale.pdf").resolve()
 
 DF = get_filtered_chapters_df("combat")
 KEYFRAMES_DF = pd.read_csv(KEYFRAME_CLASSIFICATION_TSV, sep="\t")
@@ -238,6 +240,11 @@ def main():
         shot_scale_diff_stats_episode.std,
     )
     plt3.savefig(FIG_SHOT_SCALE_FILE)
+
+    plt4 = plot_top_to_bottom_similarities(
+        KEYFRAMES_DF[KEYFRAMES_DF["shot_scale_sim_score"] >= SIMILARITY_THRESHOLD]
+    )
+    plt4.savefig(FIG_TOP_TO_BOTTOM_CLASSES)
 
 
 if __name__ == "__main__":

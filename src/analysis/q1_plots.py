@@ -6,9 +6,14 @@ Plots for q1_formal_features
 """
 
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+import numpy as np
 import pandas as pd
+from pathlib import Path
+from PIL import Image
 import seaborn as sns
 from tueplots import bundles
+from src.util import get_keyframe_path
 
 plt.rcParams.update(bundles.beamer_moml())
 plt.rcParams.update(
@@ -34,7 +39,7 @@ def plot_word_counts_per_episode(
 ):
     """Creates plot for word counts per episode"""
 
-    description = "Wortanzahl pro Minute der Sujets"
+    plot_title = "Wortanzahl pro Minute der Sujets"
 
     df_sorted = df.sort_values(["episode", "chapter"]).reset_index(drop=True)
 
@@ -93,7 +98,7 @@ def plot_word_counts_per_episode(
     plt.ylim(0, 160)
     plt.xlabel("Episoden")
     plt.ylabel("Wortanzahl pro Minute")
-    plt.title(f"{description} (n={len(df_sorted)})")
+    plt.title(f"{plot_title} (n={len(df_sorted)})")
     # sns.move_legend(
     #     ax,
     #     "lower center",
@@ -111,7 +116,7 @@ def plot_shot_duration_per_episode(
 ):
     """Creates plot for shot duration per episode"""
 
-    description = "Einstellungsdauer der Sujets"
+    plot_title = "Einstellungsdauer der Sujets"
 
     df_sorted = df.sort_values(["episode", "chapter"]).reset_index(drop=True)
 
@@ -170,7 +175,7 @@ def plot_shot_duration_per_episode(
     plt.ylim(0, 17)
     plt.xlabel("Episoden")
     plt.ylabel("Durchschnittl. Einstellungsdauer in sek")
-    plt.title(f"{description} (n={len(df_sorted)})")
+    plt.title(f"{plot_title} (n={len(df_sorted)})")
     # sns.move_legend(
     #     ax,
     #     "lower center",
@@ -189,7 +194,7 @@ def plot_shot_scale_per_episode(
 ):
     """Creates plot for shot scale ratio per episode"""
 
-    description = "Entwicklung der Einstellungsgrößen der Sujets"
+    plot_title = "Entwicklung der Einstellungsgrößen der Sujets"
 
     # Aggregate per episode
     df_episode = (
@@ -267,12 +272,146 @@ def plot_shot_scale_per_episode(
     )
     ax.set_xlabel("Episode")
     ax.set_ylabel("Anteil der Einstellungsgrößen")
-    ax.set_title(f"{description} (n={len(df_episode)})")
+    ax.set_title(f"{plot_title} (n={len(df_episode)})")
     ax.set_ylim(0, 1)
     ax.set_xlim(df["episode"].min(), df["episode"].max())
 
     leg = ax.legend(loc="upper right", frameon=True, fontsize=9)
     leg.get_frame().set_facecolor("white")
     leg.get_frame().set_alpha(0.7)
+
+    return plt
+
+
+def plot_top_to_bottom_similarities(df: pd.DataFrame):
+    """Creates plot for top, medium and bottom classification of keyframes regarding shot scale,
+    with varying row heights and preserved image aspect ratios."""
+
+    def get_row_heights(df, shot_scales, max_width=400):
+        """Compute relative heights for each row based on tallest image in row."""
+        heights = []
+        for shot_scale, _ in shot_scales:
+            subset = df[df["shot_scale_class"] == shot_scale].sort_values(
+                "shot_scale_sim_score", ascending=False
+            )
+            if subset.empty:
+                heights.append(1)
+                continue
+
+            rows = [
+                subset.iloc[0],
+                subset.iloc[len(subset) // 2],
+                subset.iloc[-1],
+            ]
+
+            # find max height-to-width ratio in this row
+            ratios = []
+            for row in rows:
+                try:
+                    img_path = Path(get_keyframe_path(row["filestem"], row["frame"])).resolve()
+                    img = Image.open(img_path)
+                    ratios.append(img.height / img.width)
+                except Exception:
+                    ratios.append(1)  # fallback if image missing
+            # use max ratio as row height proxy
+            heights.append(max(ratios))
+        return heights
+
+    plot_title = "Top, Medium, Bottom Sim Scores"
+
+    shot_scales = [
+        ("Long Shot", "WS"),
+        ("Medium Shot", "MS"),
+        ("Close-up", "CS"),
+    ]
+
+    # relative heights for the rows (can tweak as needed)
+    row_heights = get_row_heights(df, shot_scales)
+
+    fig = plt.figure(figsize=(4, 4), constrained_layout=False)
+
+    # outer grid for rows with varying heights
+    outer = gridspec.GridSpec(3, 1, figure=fig, height_ratios=row_heights, hspace=0.00, wspace=0.0)
+
+    for row_idx, (shot_scale, label) in enumerate(shot_scales):
+        subset = df[df["shot_scale_class"] == shot_scale].sort_values(
+            "shot_scale_sim_score", ascending=False
+        )
+
+        if subset.empty:
+            continue
+
+        rows = [
+            subset.iloc[0],
+            subset.iloc[len(subset) // 2],
+            subset.iloc[-1],
+        ]
+
+        # inner grid: 1 row, 4 columns (label + 3 images)
+        inner = gridspec.GridSpecFromSubplotSpec(
+            1, 4, subplot_spec=outer[row_idx], width_ratios=[0.10, 1, 1, 1], wspace=0.03, hspace=0.0
+        )
+
+        # ---- left label axis ----
+        label_ax = fig.add_subplot(inner[0])
+        label_ax.text(
+            0.5,
+            0.5,
+            label,
+            rotation=90,
+            ha="center",
+            va="center",
+            fontsize=12,
+            fontweight="bold",
+        )
+        label_ax.axis("off")
+
+        # ---- image axes ----
+        for col_idx, row in enumerate(rows):
+            ax = fig.add_subplot(inner[col_idx + 1])
+            ax.set_anchor("C")
+
+            sim_score = float(row["shot_scale_sim_score"])
+            img_path = Path(get_keyframe_path(row["filestem"], row["frame"])).resolve()
+
+            try:
+                img = Image.open(img_path)
+                ax.imshow(img, aspect="auto")  # aspect auto for scaling within ax
+
+                # preserve aspect ratio by adjusting extent of the image
+                ax.set_aspect("equal")
+
+            except Exception:
+                ax.text(
+                    0.5,
+                    0.5,
+                    "Image not found",
+                    ha="center",
+                    va="center",
+                    transform=ax.transAxes,
+                )
+
+            ax.text(
+                0.2,
+                0.3,
+                f"{sim_score:.2f}",
+                transform=ax.transAxes,
+                ha="center",
+                va="center",
+                fontsize=12,
+                fontweight="bold",
+                color="gold",
+                bbox=dict(
+                    facecolor="lightgrey", alpha=0.5, boxstyle="round,pad=0.2", edgecolor="none"
+                ),
+            )
+
+            ax.axis("off")
+
+    fig.subplots_adjust(left=0.02, right=0.98, top=0.92, bottom=0.02, hspace=0.0, wspace=0.0)
+
+    fig.suptitle(plot_title, fontsize=14)
+    plt.rcParams["axes.xmargin"] = 0
+    plt.rcParams["axes.ymargin"] = 0
 
     return plt

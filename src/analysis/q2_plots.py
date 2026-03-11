@@ -6,10 +6,14 @@ Plots for q2_formal_features
 """
 
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 import pandas as pd
 import seaborn as sns
-import numpy as np
 from tueplots import bundles
+from src.util import get_keyframe_path
+from pathlib import Path
+from PIL import Image
+
 
 plt.rcParams.update(bundles.beamer_moml())
 plt.rcParams.update(
@@ -135,222 +139,135 @@ def plot_depiction_ratio_per_episode(
 
     return plt
 
-def plot_narrative_trends_per_episode(df: pd.DataFrame, columns: list[str], labels: dict[str, str], window: int = 3):
-    """
-    Creates a stacked plot with trend lines for selected narrative columns.
-    
-    Args:
-        df: DataFrame containing 'episode', 'year', and numeric dummy columns.
-        columns: list of column names to plot.
-        labels: dictionary mapping columns to display labels.
-        window: rolling mean window for smoothing.
-    """
+def plot_top_to_bottom_similarities(df: pd.DataFrame):
+    """Creates plot for top, medium and bottom classification of keyframes regarding shot scale,
+    with varying row heights and preserved image aspect ratios."""
 
-     # Ensure we only use numeric columns
-    df_numeric = df[["episode", "year"] + columns].copy()
-    
-    # Aggregate per episode
-    df_episode = df_numeric.groupby(["episode", "year"], as_index=False).mean().sort_values("episode")
-    
-    # Rolling mean smoothing
-    window = 3
-    for col in columns:
-        df_episode[col] = df_episode[col].rolling(window=window, center=True, min_periods=1).mean()
-     
-    # Figure
-    fig, ax = plt.subplots(figsize=(6, 4))
-    colors = sns.color_palette("tab10", len(columns))
-    
-    ax.stackplot(
-        df_episode["episode"],
-        [df_episode[col] for col in columns],
-        labels=[labels[col] for col in columns],
-        colors=colors,
-        alpha=0.6
-    )
-    
-    # Regression trend lines
-    for col, color in zip(columns, colors):
-        sns.regplot(
-            data=df_episode,
-            x="episode",
-            y=col,
-            scatter=False,
-            color=color,
-            ax=ax
-        )
-    
-    # Vertical lines for years
-    year_positions = df.groupby("year")["episode"].min()
-    for ep in year_positions:
-        ax.axvline(x=ep, color="lightgrey", linestyle="-", alpha=0.5)
-    
-    # Secondary x-axis for years
-    secax = ax.secondary_xaxis("top")
-    secax.set_xticks(year_positions.values)
-    secax.set_xticklabels(year_positions.index)
-    secax.set_xlabel("Jahr")
-    
-    ax.set_xlabel("Episode")
-    ax.set_ylabel("Anteil der Kapitel")
-    ax.set_title(f"Narrative Framing Trends (n={len(df_episode)})")
-    ax.set_xlim(df["episode"].min(), df["episode"].max())
-    ax.set_ylim(0, 1)
-    
-    leg = ax.legend(loc="upper right", frameon=True, fontsize=9)
-    leg.get_frame().set_facecolor("white")
-    leg.get_frame().set_alpha(0.7)
-    
-    plt.tight_layout()
-    return plt
+    def get_row_heights(df, depictions, max_width=400):
+        """Compute relative heights for each row based on tallest image in row."""
+        heights = []
+        for shot_scale, _ in depictions:
+            subset = df[df["content_class"] == shot_scale].sort_values(
+                "content_sim_score", ascending=False
+            )
+            if subset.empty:
+                heights.append(1)
+                continue
 
-def plot_category_trends_per_episode(
-    df: pd.DataFrame,
-    columns: list[str],
-    labels: dict[str, str],
-    title: str,
-    window: int = 3
-):
-    """
-    General stacked area plot for any category/dummy columns per episode.
-    
-    Args:
-        df: DataFrame containing 'episode', 'year', and numeric dummy columns.
-        columns: List of column names to plot.
-        labels: Dictionary mapping column names to display labels.
-        title: Plot title.
-        window: Rolling mean window for smoothing.
-    """
-    # Ensure we only use numeric columns
-    df_numeric = df[["episode", "year"] + columns].copy()
+            rows = [
+                subset.iloc[0],
+                subset.iloc[len(subset) // 2],
+                subset.iloc[-1],
+            ]
 
-    # Aggregate per episode
-    df_episode = df_numeric.groupby(["episode", "year"], as_index=False).mean().sort_values("episode")
+            # find max height-to-width ratio in this row
+            ratios = []
+            for row in rows:
+                try:
+                    img_path = Path(get_keyframe_path(row["filestem"], row["frame"])).resolve()
+                    img = Image.open(img_path)
+                    ratios.append(img.height / img.width)
+                except Exception:
+                    ratios.append(1)  # fallback if image missing
+            # use max ratio as row height proxy
+            heights.append(max(ratios))
+        return heights
 
-    # Apply rolling mean smoothing
-    for col in columns:
-        df_episode[col] = df_episode[col].rolling(window=window, center=True, min_periods=1).mean()
+    plot_title = "Top, Medium, Bottom Sim Scores"
 
-    # Figure and colors
-    fig, ax = plt.subplots(figsize=(6, 4))
-    colors = sns.color_palette("tab10", len(columns))
+    depictions = [
+        ("collective", "Koll"),
+        ("multiples", "Mult"),
+        ("individual", "Indv"),
+    ]
 
-    # Stackplot
-    ax.stackplot(
-        df_episode["episode"],
-        [df_episode[col] for col in columns],
-        labels=[labels[col] for col in columns],
-        colors=colors,
-        alpha=0.6
-    )
+    # relative heights for the rows (can tweak as needed)
+    row_heights = get_row_heights(df, depictions)
 
-    # Regression trend lines
-    for col, color in zip(columns, colors):
-        sns.regplot(
-            data=df_episode,
-            x="episode",
-            y=col,
-            scatter=False,
-            color=color,
-            ax=ax
+    fig = plt.figure(figsize=(4, 4), constrained_layout=False)
+
+    # outer grid for rows with varying heights
+    outer = gridspec.GridSpec(3, 1, figure=fig, height_ratios=row_heights, hspace=0.00, wspace=0.0)
+
+    for row_idx, (depiction, label) in enumerate(depictions):
+        subset = df[df["content_class"] == depiction].sort_values(
+            "content_sim_score", ascending=False
         )
 
-    # Vertical lines for years
-    year_positions = df.groupby("year")["episode"].min()
-    for ep in year_positions:
-        ax.axvline(x=ep, color="lightgrey", linestyle="-", alpha=0.5)
+        if subset.empty:
+            continue
 
-    # Secondary x-axis for years
-    secax = ax.secondary_xaxis("top")
-    secax.set_xticks(year_positions.values)
-    secax.set_xticklabels(year_positions.index)
-    secax.set_xlabel("Jahr")
+        rows = [
+            subset.iloc[0],
+            subset.iloc[len(subset) // 2],
+            subset.iloc[-1],
+        ]
 
-    ax.set_xlabel("Episode")
-    ax.set_ylabel("Anteil der Kapitel")
-    ax.set_title(f"{title} (n={len(df_episode)})")
-    ax.set_xlim(df["episode"].min(), df["episode"].max())
-    ax.set_ylim(0, 1)
+        # inner grid: 1 row, 4 columns (label + 3 images)
+        inner = gridspec.GridSpecFromSubplotSpec(
+            1, 4, subplot_spec=outer[row_idx], width_ratios=[0.10, 1, 1, 1], wspace=0.03, hspace=0.0
+        )
 
-    leg = ax.legend(loc="upper right", frameon=True, fontsize=9)
-    leg.get_frame().set_facecolor("white")
-    leg.get_frame().set_alpha(0.7)
+        # ---- left label axis ----
+        label_ax = fig.add_subplot(inner[0])
+        label_ax.text(
+            0.5,
+            0.5,
+            label,
+            rotation=90,
+            ha="center",
+            va="center",
+            fontsize=12,
+            fontweight="bold",
+        )
+        label_ax.axis("off")
 
-    plt.tight_layout()
-    return plt
+        # ---- image axes ----
+        for col_idx, row in enumerate(rows):
+            ax = fig.add_subplot(inner[col_idx + 1])
+            ax.set_anchor("C")
 
-def plot_heatmap(
-    corr_df: pd.DataFrame,
-    title: str,
-    row_prefix: str | None = None,
-    col_prefix: str | None = None,
-    figsize: tuple | None = None
-):
-    """
-    Plots a heatmap with fixed size and optionally strips prefixes from labels.
+            sim_score = float(row["content_sim_score"])
+            img_path = Path(get_keyframe_path(row["filestem"], row["frame"])).resolve()
 
-    Args:
-        corr_df: DataFrame of correlations.
-        title: Plot title.
-        row_prefix: Optional prefix to remove from row labels.
-        col_prefix: Optional prefix to remove from column labels.
-        figsize: Optional figure size (width, height).
-    """
-    # Prepare labels
-    row_labels = corr_df.index
-    col_labels = corr_df.columns
+            try:
+                img = Image.open(img_path)
+                ax.imshow(img, aspect="auto")  # aspect auto for scaling within ax
 
-    if row_prefix:
-        row_labels = [r.replace(row_prefix, "") for r in row_labels]
-    if col_prefix:
-        col_labels = [c.replace(col_prefix, "") for c in col_labels]
+                # preserve aspect ratio by adjusting extent of the image
+                ax.set_aspect("equal")
 
-    # Dynamic figure size if not provided
-    if figsize is None:
-        fig_width = max(8, len(col_labels) * 0.5)
-        fig_height = max(6, len(row_labels) * 0.5)
-        figsize = (fig_width, fig_height)
+            except Exception:
+                ax.text(
+                    0.5,
+                    0.5,
+                    "Image not found",
+                    ha="center",
+                    va="center",
+                    transform=ax.transAxes,
+                )
 
-    fig, ax = plt.subplots(figsize=figsize, layout="constrained")
-    sns.heatmap(
-        corr_df,
-        cmap="coolwarm",
-        center=0,
-        xticklabels=col_labels,
-        yticklabels=row_labels,
-        ax=ax
-    )
-    ax.set_title(title)
-    return plt
+            ax.text(
+                0.2,
+                0.3,
+                f"{sim_score:.2f}",
+                transform=ax.transAxes,
+                ha="center",
+                va="center",
+                fontsize=12,
+                fontweight="bold",
+                color="gold",
+                bbox=dict(
+                    facecolor="lightgrey", alpha=0.5, boxstyle="round,pad=0.2", edgecolor="none"
+                ),
+            )
 
-def plot_keyword_trends(yearly_keywords, top_n=10):
+            ax.axis("off")
 
-    important_words = yearly_keywords.mean().nlargest(top_n).index
+    fig.subplots_adjust(left=0.02, right=0.98, top=0.92, bottom=0.02, hspace=0.0, wspace=0.0)
 
-    fig, ax = plt.subplots(figsize=(12, 6))
-
-    for word in important_words:
-        ax.plot(yearly_keywords.index, yearly_keywords[word], label=word)
-
-    ax.legend(bbox_to_anchor=(1.02, 1), loc="upper left")
-
-    ax.set_title("Keyword Trends in den Zusammenfassungen (1940–1945)")
-    ax.set_ylabel("TF-IDF Relevanz")
-    ax.set_xlabel("Jahr")
-
-    fig.tight_layout()
-
-    return plt
-
-def plot_topic_profile(topic_profile: pd.DataFrame, title="Narratives Framing nach Topic"):
-    """
-    Plots a heatmap of dummy variable averages per topic.
-    """
-    fig, ax = plt.subplots(figsize=(12,6), layout="constrained")
-    sns.heatmap(topic_profile, cmap="viridis", ax=ax)
-    
-    ax.set_title(title)
-    ax.set_ylabel("Topic")
-    ax.set_xlabel("Narrative")
+    fig.suptitle(plot_title, fontsize=14)
+    plt.rcParams["axes.xmargin"] = 0
+    plt.rcParams["axes.ymargin"] = 0
 
     return plt
