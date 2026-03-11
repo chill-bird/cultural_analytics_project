@@ -16,7 +16,7 @@ from src.util import (
     get_filtered_chapters_df,
 )
 from src.analysis.q1_formal_features import ColumnStats
-from src.analysis.q2_plots import plot_depiction_ratio_per_episode
+from src.analysis.q2_plots import plot_depiction_ratio_per_episode, plot_top_to_bottom_similarities
 
 
 # -----------------------------------------------------------------
@@ -24,6 +24,7 @@ from src.analysis.q2_plots import plot_depiction_ratio_per_episode
 # -----------------------------------------------------------------
 
 FIG_SOLDIER_DEPICTIONS_FILE = Path(DOC_DIR / "imgs" / "soldier_depictions.pdf").resolve()
+FIG_TOP_TO_BOTTOM_CLASSES = Path(DOC_DIR / "imgs" / "top_to_bottom_sims_soldiers.pdf").resolve()
 
 DF = get_filtered_chapters_df("soldiers")
 KEYFRAMES_DF = pd.read_csv(KEYFRAME_CLASSIFICATION_TSV, sep="\t")
@@ -125,11 +126,11 @@ def main():
         lambda row: row["ratio_individual_depictions"] - row["ratio_collective_depictions"], axis=1
     )
     depictions_diff_stats_episode = ColumnStats(
-        df, "episode", "ratio_diff", "Difference between long and close shots"
+        df, "episode", "ratio_diff", "Difference between individual and collective soldier depictions"
     )
     depictions_diff_stats_episode.print_stats()
 
-    plt = plot_depiction_ratio_per_episode(
+    plt1 = plot_depiction_ratio_per_episode(
         df,
         depictions_diff_stats_episode.spearman_p,
         depictions_diff_stats_episode.spearman_r,
@@ -137,7 +138,12 @@ def main():
         depictions_diff_stats_episode.mean,
         depictions_diff_stats_episode.std,
     )
-    plt.savefig(FIG_SOLDIER_DEPICTIONS_FILE)
+    plt1.savefig(FIG_SOLDIER_DEPICTIONS_FILE)
+
+    plt2 = plot_top_to_bottom_similarities(
+        KEYFRAMES_DF[KEYFRAMES_DF["content_sim_score"] >= SIMILARITY_THRESHOLD]
+    )
+    plt2.savefig(FIG_TOP_TO_BOTTOM_CLASSES)
 
 
 if __name__ == "__main__":

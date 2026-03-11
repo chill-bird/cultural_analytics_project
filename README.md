@@ -95,6 +95,7 @@ python -m src.analysis.q1_formal_features
 ```
 
 ### Q2: Analyze formal features and narratives in scenes with soldiers
+
 ```sh
 python -m src.analysis.q2_formal_features
 python -m src.analysis.q2_narratives
