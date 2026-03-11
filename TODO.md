@@ -3,7 +3,7 @@
 - [x] Load 240 mising data from server for CLIP data
 - [x] Threshold for CLIP classification
 - [x] Add run config for README
-- [ ] Add Q2 analysis soldier depictions
+- [x] Add Q2 analysis soldier depictions
 
 ## Nice-to-have
 
