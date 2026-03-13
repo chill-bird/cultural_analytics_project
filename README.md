@@ -1,4 +1,4 @@
-# Propagandistische Stilmittel in der Darstellung der Deutschen Wehrmacht in der Deutschen Wochenschau im Kriegsverlauf 1940-1945
+# Entwicklung filmischer Gestaltungsmittel und Narrative der Kriegsdarstellung in der Deutschen Wochenschau 1940-1945
 
 **Q1**: Gibt es einen Zusammenhang zwischen den filmischen Gestaltungsmerkmalen der Deutschen Wochenschau und dem Kriegsgeschehen?
 
@@ -13,14 +13,17 @@
 
 ```sh
 .
+├── .env  # Environment variables
 ├── dat/
 │   ├── chapter_data.tsv  # Aggregated chapter data
 │   └── keyframe_content_data.tsv  # Aggregated keyframe classification data
+│   └── narratives_data.tsv  # Aggregated narratives analysis data
 │   └── video_data.tsv  # Aggregated video data
 ├── doc/  # Documentation files
 └── src/  # Source code
     ├── analysis/  # Data analysis
     ├── chapters/  # Extract and merge chapter information from several sources
+    ├── key_frame_selection_LMSKE/  # LMKSKE scripts
     ├── keyframes/  # Keyframe classification scripts
     ├── transcribe/  # Audio data transcription and clean-up scripts
     ├── split/  # Blackout cut detection scripts
@@ -67,6 +70,7 @@ Due to repository size limits, raw data were deleted from repository and, instea
     - **frame**: Frame number
     - **prediction**: Predicted class
     - **score**: Similarity score
+4. `narratives_data.tsv`
 
 ### Chapter flags
 
